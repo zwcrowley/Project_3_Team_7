@@ -15,4 +15,4 @@ from Kaggle (this dataset shows the home prices per county for the United states
 
 - 2. Scatterplot Regression graph (per state) that would present regression graph when hovering above the state on map.
 
-- 3. United states map that presents a bar graph displaying the natural risklevel for Drought, heat wave, tornadoes, wild fire, coastal + river flooding, winter weather, lightning, and hurricanes when a specific county is clicked on. 
+- 3. A reactive bar graph that, when a county is clicked on the map, will display the natural risk level for the following: drought, heat wave, hurricanes, coastal + river flooding, lightning, tornadoes, wildfires, and winter weather. 
