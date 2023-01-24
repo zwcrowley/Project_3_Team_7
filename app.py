@@ -2,13 +2,11 @@ import numpy as np
 from flask import Flask, request, render_template, jsonify
 import pymongo
 from pymongo import MongoClient
-pip install json
 import json
 from bson.json_util import dumps, loads 
 from typing import Any
 from bson import ObjectId
 from mongopass import mongopass_app
-pip install --upgrade pip
 
 ################
 # Function to encode mongoDB object_id:
