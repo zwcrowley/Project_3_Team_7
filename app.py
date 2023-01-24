@@ -41,7 +41,7 @@ def welcome():
 def home_risk():
     """Return the home risk data as list"""
     homes = hv_risk_collection.find()
-    all_homes = jsonify(dumps(homes))
+    all_homes = dumps(homes) 
     return all_homes  
 
 # US county boundary geojson data route:
@@ -49,7 +49,7 @@ def home_risk():
 def county_lines():
     """Return the county bounds data as list"""
     counties = county_bounds_collection.find()
-    all_counties = jsonify(dumps(counties)) 
+    all_counties = dumps(counties)
     return all_counties 
 
 if __name__ == "__main__":
