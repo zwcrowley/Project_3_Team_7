@@ -6,6 +6,7 @@ import json
 from bson.json_util import dumps, loads 
 from typing import Any
 from bson import ObjectId
+from mongopass import mongopass_app
 
 ################
 # Function to encode mongoDB object_id:
@@ -24,7 +25,7 @@ app = Flask(__name__)
 
 ###############
 # setup mongo connection
-conn = "mongodb://localhost:27017"
+conn = mongopass_app
 client = pymongo.MongoClient(conn) 
 
 # connect to mongo db: 
