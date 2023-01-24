@@ -2,6 +2,7 @@ certifi
 Click
 Flask
 Flask-SQLAlchemy
+pymongo
 Gunicorn
 itsdangerous
 Jinja2
