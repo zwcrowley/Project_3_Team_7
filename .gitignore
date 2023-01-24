@@ -2,6 +2,9 @@
 api_keys.py
 config.py
 
+# mongoDB cluster paths/passwords:
+mongopass.py
+
 # General
 .DS_Store
 .AppleDouble
