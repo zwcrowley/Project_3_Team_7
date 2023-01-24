@@ -3,12 +3,11 @@ from flask import Flask, request, render_template, jsonify
 import pymongo
 from pymongo import MongoClient
 import json
-from collections import defaultdict
 from bson.json_util import dumps, loads 
-import pandas as pd
 from typing import Any
 from bson import ObjectId
 
+################
 # Function to encode mongoDB object_id:
 class MongoJSONEncoder(json.JSONEncoder):
     def default(self, o: Any) -> Any:
@@ -17,7 +16,6 @@ class MongoJSONEncoder(json.JSONEncoder):
         if isinstance(o, datetime):
             return str(o)
         return json.JSONEncoder.default(self, o)
-
 
 #################################################
 # Flask Setup

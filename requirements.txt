@@ -3,6 +3,9 @@ Click
 Flask
 Flask-SQLAlchemy
 pymongo
+json
+typing 
+bson 
 Gunicorn
 itsdangerous
 Jinja2
