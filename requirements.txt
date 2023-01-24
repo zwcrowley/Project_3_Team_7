@@ -3,7 +3,6 @@ Click
 Flask
 Flask-SQLAlchemy
 pymongo
-json
 typing 
 bson 
 Gunicorn
