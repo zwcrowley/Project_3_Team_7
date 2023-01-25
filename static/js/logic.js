@@ -28,9 +28,9 @@ let geojson;
 
 // API call
 d3.json(geoData).then(function(geo_data) {
-  console.log("geoData", geo_data)    
+  console.log("geoData", geo_data)     
 
-}); 
+});  
 
 //   // Create a new choropleth layer.
 //   geojson = L.choropleth(geo_data, {
