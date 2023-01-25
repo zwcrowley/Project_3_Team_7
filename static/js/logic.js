@@ -27,9 +27,9 @@ console.log("hv_risk", hv_risk);
 let geojson;
 
 // API call
-d3.json("http://127.0.0.1:5000/api/v1.0/home_value_risk_data").then(function(hv_risk) {
+d3.json("http://127.0.0.1:5000/api/v1.0/county_bounds_data").then(function(hv_risk) {
   console.log("hv_risk", hv_risk)          
-
+ 
 });   
 
 //   // Create a new choropleth layer.
