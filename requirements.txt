@@ -4,6 +4,7 @@ Flask
 flask_cors 
 datetime
 Flask-SQLAlchemy
+flask_pymongo
 pymongo
 typing 
 bson 
