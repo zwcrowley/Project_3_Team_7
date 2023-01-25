@@ -6,6 +6,7 @@ import json
 from bson.json_util import dumps, loads 
 from typing import Any
 from bson import ObjectId
+from datetime import datetime
 from mongopass import mongopass_app
 from flask_cors import CORS
 
@@ -17,6 +18,8 @@ class MongoJSONEncoder(json.JSONEncoder):
             return str(o)
         if isinstance(o, datetime):
             return str(o)
+        if isinstance(o, np.NaN):
+            return "null" 
         return json.JSONEncoder.default(self, o)
 
 #################################################
