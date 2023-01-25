@@ -37,7 +37,6 @@ db = client.home_risk_db
 hv_risk_collection = db.hv_risk
 county_bounds_collection = db.county_bounds
 
-
 #################################################
 # Flask Routes
 #################################################
