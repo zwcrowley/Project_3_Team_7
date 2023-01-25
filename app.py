@@ -8,7 +8,7 @@ from typing import Any
 from bson import ObjectId
 from datetime import datetime
 from mongopass import mongopass_app
-from flask_cors import CORS, cross_origin
+# from flask_cors import CORS, cross_origin
 
 ################
 # Function to encode mongoDB object_id:
@@ -24,7 +24,7 @@ class MongoJSONEncoder(json.JSONEncoder):
 # Flask Setup
 #################################################
 app = Flask(__name__)
-CORS(app, resources=r'/api/*', supports_credentials=True)  
+# CORS(app, resources=r'/api/*', supports_credentials=True)  
 
 ###############
 # setup mongo connection
@@ -42,7 +42,6 @@ county_bounds_collection = db.county_bounds
 #################################################
 
 @app.route("/")
-@cross_origin(origin='*')
 def welcome():
     """List all available api routes."""
     return (
@@ -52,8 +51,7 @@ def welcome():
     )
 
 # ZHVI data route:
-@app.route("/api/v1.0/home_value_risk_data")
-@cross_origin(origin='*')
+@app.route("/api/v1.0/home_value_risk_data", methods=["GET"])
 def home_risk():
     """Return the home risk data as json"""
     homes = hv_risk_collection.find()
@@ -69,8 +67,7 @@ def home_risk():
     return homes_response       
 
 # US county boundary geojson data route:
-@app.route("/api/v1.0/county_bounds_data")
-@cross_origin(origin='*')
+@app.route("/api/v1.0/county_bounds_data", methods=["GET"])
 def county_lines():
     """Return the county bounds data as json"""
     counties = county_bounds_collection.find()

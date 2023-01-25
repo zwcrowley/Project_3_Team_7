@@ -13,7 +13,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 let geoData = "https://team-7-proj3-map.onrender.com/api/v1.0/county_bounds_data";
 
 // Alt api from opendatasoft.com:
-let geoData2 = "https://public.opendatasoft.com/api/records/1.0/search/?dataset=us-county-boundaries&q=&rows=3233"
+// let geoData2 = "https://public.opendatasoft.com/api/records/1.0/search/?dataset=us-county-boundaries&q=&rows=3233"
 
 // Load the hv_risk data.
 let hv_risk = "https://team-7-proj3-map.onrender.com/api/v1.0/home_value_risk_data";
@@ -27,10 +27,10 @@ console.log("hv_risk", hv_risk);
 let geojson;
 
 // API call
-d3.json(geoData).then(function(geo_data) {
-  console.log("geoData", geo_data)     
+d3.json("http://127.0.0.1:5000/api/v1.0/home_value_risk_data").then(function(hv_risk) {
+  console.log("hv_risk", hv_risk)          
 
-});  
+});   
 
 //   // Create a new choropleth layer.
 //   geojson = L.choropleth(geo_data, {
