@@ -1,6 +1,7 @@
 certifi
 Click
 Flask
+flask_cors 
 Flask-SQLAlchemy
 pymongo
 typing 

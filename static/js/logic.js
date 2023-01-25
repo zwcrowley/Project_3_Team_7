@@ -15,13 +15,14 @@ let geoData = "https://team-7-proj3-map.onrender.com/api/v1.0/county_bounds_data
 // Load the hv_risk data.
 let hv_risk = "https://team-7-proj3-map.onrender.com/api/v1.0/home_value_risk_data";
 
-console.log("geo_data", hv_risk)
+console.log("geo_data", hv_risk);
+
 let geojson;
-// Not reading in data and not throwing errors::::::::
-d3.json(geoData).then(function(geo_data) {console.log("geo_data", geo_data)});
 
 // Not reading in data and not throwing errors::::::::
-d3.json(hv_risk).then(function(hv_risk) {console.log("hv_risk", hv_risk)});
+d3.json("https://team-7-proj3-map.onrender.com/api/v1.0/home_value_risk_data").then(function(hv_risk) {
+  
+  console.log("hv_risk", hv_risk)
 
 // Get the data with d3. ????? NOT WORKING?????????
 d3.json(geoData).then(function(geo_data) {
@@ -94,9 +95,9 @@ d3.json(geoData).then(function(geo_data) {
   //   div.innerHTML += "<ul>" + labels.join("") + "</ul>";
   //   return div;
   // };
-  console.log("geo_data", geo_data)
 
   // Adding the legend to the map
   // legend.addTo(myMap);
+    });
   });
 });

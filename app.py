@@ -7,6 +7,7 @@ from bson.json_util import dumps, loads
 from typing import Any
 from bson import ObjectId
 from mongopass import mongopass_app
+from flask_cors import CORS
 
 ################
 # Function to encode mongoDB object_id:
@@ -22,6 +23,7 @@ class MongoJSONEncoder(json.JSONEncoder):
 # Flask Setup
 #################################################
 app = Flask(__name__)
+CORS(app)
 
 ###############
 # setup mongo connection
