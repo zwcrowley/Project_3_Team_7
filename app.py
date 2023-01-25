@@ -6,7 +6,7 @@ import json
 from bson.json_util import dumps, loads 
 from typing import Any
 from bson import ObjectId
-import mongopass
+from mongopass import mongopass_app
 
 ################
 # Function to encode mongoDB object_id:
