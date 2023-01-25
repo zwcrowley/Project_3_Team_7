@@ -63,6 +63,8 @@ def home_risk():
     # homes_obj = json.loads(homes_json)
     # Create response:
     homes_response = Response(response=homes_json, status=200, mimetype="application/json")
+    # Allow cross origin
+    homes_response.headers.add('Access-Control-Allow-Origin', '*')
     # Return response:
     return homes_response       
 
@@ -78,7 +80,9 @@ def county_lines():
     # counties_obj = json.loads(counties_json)
     # Create response:
     cnty_response = Response(response=counties_json, status=200, mimetype="application/json")
-    # Return response:
+    # Allow cross origin
+    cnty_response.headers.add('Access-Control-Allow-Origin', '*')
+    # Return response: 
     return cnty_response
 
 if __name__ == "__main__":
