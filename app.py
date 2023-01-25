@@ -25,7 +25,7 @@ app = Flask(__name__)
 
 ###############
 # setup mongo connection
-conn = mongopass
+conn = mongopass_app
 client = pymongo.MongoClient(conn) 
 
 # connect to mongo db: 
