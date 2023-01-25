@@ -7,6 +7,7 @@ from bson.json_util import dumps, loads
 from typing import Any
 from bson import ObjectId
 from mongopass import mongopass_app
+from flask_cors import CORS
 
 ################
 # Function to encode mongoDB object_id:
@@ -14,14 +15,14 @@ class MongoJSONEncoder(json.JSONEncoder):
     def default(self, o: Any) -> Any:
         if isinstance(o, ObjectId):
             return str(o)
-        if isinstance(o, datetime):
-            return str(o)
         return json.JSONEncoder.default(self, o)
 
 #################################################
 # Flask Setup
 #################################################
 app = Flask(__name__)
+# Allow cross origin:
+CORS(app) 
 
 ###############
 # setup mongo connection
@@ -33,7 +34,6 @@ db = client.home_risk_db
 # Connect to two collections:
 hv_risk_collection = db.hv_risk
 county_bounds_collection = db.county_bounds
-
 
 #################################################
 # Flask Routes
@@ -55,12 +55,10 @@ def home_risk():
     homes = hv_risk_collection.find()
     # Convert object_id from the homes mongo cursor:
     homes_json = MongoJSONEncoder().encode(list(homes))
-    # Convert to python obj:
-    # homes_obj = json.loads(homes_json)
     # Create response:
     homes_response = Response(response=homes_json, status=200, mimetype="application/json")
     # Allow cross origin
-    homes_response.headers.add('Access-Control-Allow-Origin', '*')
+    # homes_response.headers.add('Access-Control-Allow-Origin', '*')
     # Return response:
     return homes_response       
 
@@ -71,14 +69,12 @@ def county_lines():
     counties = county_bounds_collection.find()
     # Convert object_id from the homes mongo cursor:
     counties_json = MongoJSONEncoder().encode(list(counties))
-    # Convert to python obj:
-    # counties_obj = json.loads(counties_json)
     # Create response:
     cnty_response = Response(response=counties_json, status=200, mimetype="application/json")
     # Allow cross origin
-    cnty_response.headers.add('Access-Control-Allow-Origin', '*')
+    # cnty_response.headers.add('Access-Control-Allow-Origin', '*')
     # Return response:
     return cnty_response 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True) 

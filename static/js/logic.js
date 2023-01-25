@@ -20,17 +20,17 @@ let hv_risk = "https://team-7-proj3-map.onrender.com/api/v1.0/home_value_risk_da
 
 console.log("hv_risk", hv_risk);
 
-// d3.json(hv_risk).then(function(hv_risk) { 
-  //   console.log("hv_risk", hv_risk)      
-  // });
+d3.json(hv_risk).then(function(hv_risk) { 
+    console.log("hv_risk", hv_risk)      
+  }); 
 
 let geojson;
 
 // API call
-d3.json("http://127.0.0.1:5000/api/v1.0/county_bounds_data").then(function(hv_risk) {
-  console.log("hv_risk", hv_risk)          
+// d3.json(geoData).then(function(geo_data) {
+//   console.log("geo_data", geo_data)           
  
-});   
+// });   
 
 //   // Create a new choropleth layer.
 //   geojson = L.choropleth(geo_data, {
