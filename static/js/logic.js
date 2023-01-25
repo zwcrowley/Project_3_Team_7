@@ -24,8 +24,8 @@ d3.json(geoData).then(function(geo_data) {
 
   console.log("geo_data", geo_data)   
   d3.json(hv_risk).then(function(hv_risk) { 
-    console.log("hv_risk", hv_risk)     
-    
+    console.log("hv_risk", hv_risk)      
+     
   });
 });
 

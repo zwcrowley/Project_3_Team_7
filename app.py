@@ -18,8 +18,6 @@ class MongoJSONEncoder(json.JSONEncoder):
             return str(o)
         if isinstance(o, datetime):
             return str(o)
-        if isinstance(o, np.NaN):
-            return "null" 
         return json.JSONEncoder.default(self, o)
 
 #################################################
