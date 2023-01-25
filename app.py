@@ -1,5 +1,5 @@
 import numpy as np
-from flask import Flask, request, render_template, jsonify
+from flask import Flask, Response, request, render_template, jsonify
 import pymongo
 from pymongo import MongoClient
 import json
@@ -56,9 +56,11 @@ def home_risk():
     # Convert object_id from the homes mongo cursor:
     homes_json = MongoJSONEncoder().encode(list(homes))
     # Convert to python obj:
-    homes_obj = json.loads(homes_json)
-
-    return jsonify(homes_obj)      
+    # homes_obj = json.loads(homes_json)
+    # Create response:
+    homes_response = Response(response=homes_json, status=200, mimetype="application/json")
+    # Return response:
+    return homes_response       
 
 # US county boundary geojson data route:
 @app.route("/api/v1.0/county_bounds_data")
@@ -68,8 +70,11 @@ def county_lines():
     # Convert object_id from the homes mongo cursor:
     counties_json = MongoJSONEncoder().encode(list(counties))
     # Convert to python obj:
-    counties_obj = json.loads(counties_json)
-    return jsonify(counties_obj)  
+    # counties_obj = json.loads(counties_json)
+    # Create response:
+    cnty_response = Response(response=counties_json, status=200, mimetype="application/json")
+    # Return response:
+    return cnty_response
 
 if __name__ == "__main__":
     app.run(debug=True)
