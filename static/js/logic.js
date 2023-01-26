@@ -50,13 +50,16 @@ d3.json(geoJSON_github).then(function(geo_data) {
 
   d3.csv(hv_risk_github).then(function(hv_risk) {
     console.log("hv_risk", hv_risk)
+    console.log("risk score", hv_risk.risk_index_score)
   // Create a new choropleth layer.
   geojson = L.choropleth(geo_data, {
 
     // Define which property in the features to using a function for a hv_risk data source.
-    valueProperty:function(feature) {
-      return hv_risk.filter(home => home.state_county_FIPS = feature.properties.state_county_FIPS).risk_index_score;  
-    } ,
+    // valueProperty:function(feature, index) {
+    //   return hv_risk.filter(home => home.state_county_FIPS = feature.properties.state_county_FIPS)[index].risk_index_score;  
+    // } ,
+
+    valueProperty:hv_risk[0].risk_index_score,
 
     // Set the color scale.
     scale: ["#ffffb2", "#b10026"],
@@ -79,34 +82,7 @@ d3.json(geoJSON_github).then(function(geo_data) {
     //   //     feature.properties.DP03_16E + "<br /><br />Estimated Total Income and Benefits for Families: $" + feature.properties.DP03_75E);
     //   // }
     }).addTo(myMap);
-
-    // // Set up the legend.
-    // let legend = L.control({ position: "bottomright" });
-    // legend.onAdd = function() {
-    //   let div = L.DomUtil.create("div", "info legend");
-    //   let limits = geojson.options.limits;
-    //   let colors = geojson.options.colors;
-    //   let labels = [];
-
-    //   // Add the minimum and maximum.
-    //   let legendInfo = "<h1>Population with Children<br />(ages 6-17)</h1>" +
-    //     "<div class=\"labels\">" +
-    //       "<div class=\"min\">" + limits[0] + "</div>" +
-    //       "<div class=\"max\">" + limits[limits.length - 1] + "</div>" +
-    //     "</div>";
-
-    //   div.innerHTML = legendInfo;
-
-    //   limits.forEach(function(limit, index) {
-    //     labels.push("<li style=\"background-color: " + colors[index] + "\"></li>");
-    //   });
-
-    //   div.innerHTML += "<ul>" + labels.join("") + "</ul>";
-    //   return div;
-    // };
-
-    // Adding the legend to the map
-    // legend.addTo(myMap);
-      });
-    }); 
+ 
+  });
+}); 
 

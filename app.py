@@ -1,14 +1,14 @@
 import numpy as np
 from flask import Flask, Response, request, render_template, jsonify
 import pymongo
-from flask_pymongo import PyMongo
+# from flask_pymongo import PyMongo
 from pymongo import MongoClient
 import json
 from bson.json_util import dumps, loads 
 from typing import Any
 from bson import ObjectId
 from mongopass import mongopass_app
-from flask_cors import CORS
+# from flask_cors import CORS
 
 ################
 # Function to encode mongoDB object_id:
@@ -23,21 +23,21 @@ class MongoJSONEncoder(json.JSONEncoder):
 #################################################
 app = Flask(__name__)
 # Use flask_pymongo to set up mongo connection
-app.config["MONGO_URI"] = mongopass_app 
-mongo = PyMongo(app)
+# app.config["MONGO_URI"] = mongopass_app 
+# mongo = PyMongo(app)
 # Allow cross origin:
-CORS(app) 
+# CORS(app) 
 
 ###############
 # setup mongo connection
-# conn = mongopass_app
-# client = pymongo.MongoClient(conn) 
+conn = mongopass_app
+client = pymongo.MongoClient(conn) 
 
-# # connect to mongo db: 
-# db = client.home_risk_db
-# # Connect to two collections:
-# hv_risk_collection = db.hv_risk
-# county_bounds_collection = db.county_bounds
+# connect to mongo db: 
+db = client.home_risk_db
+# Connect to two collections:
+hv_risk_collection = db.hv_risk
+county_bounds_collection = db.county_bounds
 
 #################################################
 # Flask Routes
@@ -56,7 +56,7 @@ def welcome():
 @app.route("/api/v1.0/home_value_risk_data")
 def home_risk():
     """Return the home risk data as json"""
-    homes = mongo.db.hv_risk.find()
+    homes = hv_risk_collection.find()
     # Convert object_id from the homes mongo cursor:
     homes_json = MongoJSONEncoder().encode(list(homes))
     # Create response:
@@ -70,7 +70,7 @@ def home_risk():
 @app.route("/api/v1.0/county_bounds_data")
 def county_lines():
     """Return the county bounds data as json"""
-    counties = mongo.db.county_bounds.find()
+    counties = county_bounds_collection.find() 
     # Convert object_id from the homes mongo cursor:
     counties_json = MongoJSONEncoder().encode(list(counties))
     # Create response:
