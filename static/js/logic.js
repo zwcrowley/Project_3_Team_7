@@ -30,43 +30,14 @@ let hv_risk_github = "https://raw.githubusercontent.com/zwcrowley/Project_3_Team
 // let geoData2 = "https://public.opendatasoft.com/api/records/1.0/search/?dataset=us-county-boundaries&q=&rows=3233"
 
 
-// Got this to work from gitub repo:
-// d3.json(geoJSON_github).then(function(geo_data) { 
-//     console.log("geo_data", geo_data) 
-//     // Set up Colors:
-//     var myStyle = {
-//       "color": "#ff6a00",
-//       "weight": 2 
-//     };
-  
-//     // Set up the lines for the tectonic plates, use the style and set geoJSON tectonic plates data:
-//     L.geoJSON(geo_data, { 
-//       style: myStyle
-//       }).addTo(myMap);	  
-
-//   }); 
-// Set colors for choropleth:
-// var lowColor = 'white'
-// var highColor = 'red'
-
+// Set up a var for the choropleth map:
 let geojson;
-// d3 call to github for hv_risk data:
+
+// d3 call to github for hv_risk data- csv:
 d3.csv(hv_risk_github).then(function(hv_risk) {
   console.log("hv_risk", hv_risk)
-  // var dataArray = [];
-	// for (var d = 0; d < hv_risk.length; d++) {
-	// 	dataArray.push(parseFloat(hv_risk[d].risk_index_score))
-	// }
-  // // Pick out the min value in the risk index array:
-	// var minVal = d3.min(dataArray)
-	// var maxVal = d3.max(dataArray)
-	// var ramp = d3.scaleLinear().domain([minVal,maxVal]).range([lowColor,highColor])
-  // console.log("minVal risk_index_score", minVal)
-  // console.log("maxVal risk_index_score", maxVal)
-  // console.log("ramp", ramp)
 
-
-  // d3 call to github for geo_data data:
+  // d3 call to github for geo_data data- json:
   d3.json(geoJSON_github).then(function(geo_data) {
     console.log("geo_data", geo_data)
     // Loop through each state data value in the .csv file
@@ -120,17 +91,30 @@ d3.csv(hv_risk_github).then(function(hv_risk) {
        }
     }).addTo(myMap);
 
-    // If we want to add borders to the county lines:
-    // // Set up Colors: 
-    // var myStyle = {
-    //   "color": "#ff6a00",
-    //   "weight": 2 
-    // };
-  
-    // // Set up the lines for the tectonic plates, use the style and set geoJSON tectonic plates data:
-    // L.geoJSON(geo_data, { 
-    //   style: myStyle
-    //   }).addTo(myMap);	 
+    // Set up the legend:
+  let legend = L.control({ position: "bottomright" });
+  legend.onAdd = function() {
+    let div = L.DomUtil.create("div", "info legend");
+    let limits = geojson.options.limits;
+    let colors = geojson.options.colors;
+    let labels = [];
+
+    // Add the minimum and maximum.
+    let legendInfo = "<h1>National Risk Index Score</h1>" +
+      "<div class=\"labels\">" +
+        "<div class=\"min\">" + limits[0] + "</div>" +
+        "<div class=\"max\">" + limits[limits.length - 1] + "</div>" +
+      "</div>";
+    // Add legend to the html:
+    div.innerHTML = legendInfo;
+    limits.forEach(function(limit, index) {
+      labels.push("<li style=\"background-color: " + colors[index] + "\"></li>");
+    });
+    div.innerHTML += "<ul>" + labels.join("") + "</ul>";
+    return div;
+  };
+  // Adding the legend to the map
+  legend.addTo(myMap);
  
   });
 }); 
