@@ -72,7 +72,7 @@ d3.csv(hv_risk_github).then(function(hv_risk) {
     // Loop through each state data value in the .csv file
     for (var i = 0; i < hv_risk.length; i++) {
       // Grab state_county_FIPS Name
-      var data_FIPS = hv_risk.state_county_FIPS;
+      var data_FIPS = hv_risk[i].state_county_FIPS;
       // Grab data value 
       var dataValue = parseFloat(hv_risk[i].risk_index_score); 
       // console.log("dataValue", dataValue, i)
@@ -80,17 +80,19 @@ d3.csv(hv_risk_github).then(function(hv_risk) {
       // Find the corresponding state_county_FIPS inside the GeoJSON
       for (var j = 0; j < geo_data.features.length; j++) {
         var json_FIPS = geo_data.features[j].properties.state_county_FIPS;
+        // geo_data.features[j].properties.risk_index_score = null;
         // If the fips matches in both datasets:
-        if (data_FIPS = json_FIPS) {
+        if (data_FIPS == json_FIPS) {
           // Copy the data value into the JSON
-          geo_data.features[j].properties.risk_index_score = dataValue || null;
-          // console.log("geo_data.features[j].properties.risk_index_score", geo_data.features[0].properties, i)
-          // Stop looking through the JSON 
-          break;
+          geo_data.features[j].properties.risk_index_score = dataValue;
+          // console.log("geo_data.features[j].properties.risk_index_score", geo_data.features[0].properties.risk_index_score, i)   
+          // Stop looking through the JSON
+          break;  
         }
       }
     }
     // console.log("geo_data.features[j].properties.risk_index_score", geo_data.features[0].properties)
+    console.log("geo_data.features[j].properties.risk_index_score", geo_data.features[0].properties.risk_index_score)
 
   // Create a new choropleth layer.
   geojson = L.choropleth(geo_data, {
