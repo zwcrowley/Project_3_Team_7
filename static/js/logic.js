@@ -22,6 +22,9 @@ let geoJSON_github = "https://raw.githubusercontent.com/zwcrowley/Project_3_Team
 // Github links:
 let hv_risk_github = "https://raw.githubusercontent.com/zwcrowley/Project_3_Team_7/main/output/hv_risk_df.csv"
 
+// // Logan Powell github link
+// let geoJSON_github_LP = "https://raw.githubusercontent.com/loganpowell/census-geojson/master/GeoJSON/500k/2021/county.json"
+
 
 // Alt api from opendatasoft.com:
 // let geoData2 = "https://public.opendatasoft.com/api/records/1.0/search/?dataset=us-county-boundaries&q=&rows=3233"
@@ -42,37 +45,68 @@ let hv_risk_github = "https://raw.githubusercontent.com/zwcrowley/Project_3_Team
 //       }).addTo(myMap);	  
 
 //   }); 
+// Set colors for choropleth:
+var lowColor = 'white'
+var highColor = 'red'
 
 let geojson;
-// d3 call to github:
-d3.json(geoJSON_github).then(function(geo_data) {
-  console.log("geo_data", geo_data)
-  console.log("geo_data", geo_data)
-  d3.csv(hv_risk_github).then(function(hv_risk) {
-    console.log("hv_risk", hv_risk)
-    console.log("first row risk score", hv_risk[0].risk_index_score)
-    // let risk_vp = hv_risk.filter(home => home.state_county_FIPS = geo_data.features[0].properties.state_county_FIPS)[0].risk_index_score
-    // Try to set up a forEach to pull out the risk index for each feature in geoJSON data:
-    hv_risk.forEach((home, index) => {
-    if (home[index].state_county_FIPS === geo_data.features[index].properties.state_county_FIPS) {
-        console.log("home[index].risk_index_score", home[index].risk_index_score)
-        // return home[index].risk_index_score
+// d3 call to github for hv_risk data:
+d3.csv(hv_risk_github).then(function(hv_risk) {
+  console.log("hv_risk", hv_risk)
+  var dataArray = [];
+	for (var d = 0; d < hv_risk.length; d++) {
+		dataArray.push(parseFloat(hv_risk[d].risk_index_score))
+	}
+  // Pick out the min value in the risk index array:
+	var minVal = d3.min(dataArray)
+	var maxVal = d3.max(dataArray)
+	var ramp = d3.scaleLinear().domain([minVal,maxVal]).range([lowColor,highColor])
+  console.log("minVal risk_index_score", minVal)
+  console.log("maxVal risk_index_score", maxVal)
+  console.log("ramp", ramp)
+
+
+  // d3 call to github for geo_data data:
+  d3.json(geoJSON_github).then(function(geo_data) {
+    console.log("geo_data", geo_data)
+    // Loop through each state data value in the .csv file
+    for (var i = 0; i < hv_risk.length; i++) {
+      // Grab state_county_FIPS Name
+      var data_FIPS = hv_risk.state_county_FIPS;
+      // Grab data value 
+      var dataValue = parseFloat(hv_risk[i].risk_index_score); 
+      // console.log("dataValue", dataValue, i)
+
+      // Find the corresponding state_county_FIPS inside the GeoJSON
+      for (var j = 0; j < geo_data.features.length; j++) {
+        var json_FIPS = geo_data.features[j].properties.state_county_FIPS;
+        // If the fips matches in both datasets:
+        if (data_FIPS = json_FIPS) {
+          // Copy the data value into the JSON
+          geo_data.features[j].properties.risk_index_score = dataValue || null;
+          // console.log("geo_data.features[j].properties.risk_index_score", geo_data.features[0].properties, i)
+          // Stop looking through the JSON 
+          break;
+        }
       }
-    })
-    // console.log("risk_vp", risk_vp)
-
-
+    }
+    // console.log("geo_data.features[j].properties.risk_index_score", geo_data.features[0].properties)
 
   // Create a new choropleth layer.
   geojson = L.choropleth(geo_data, {
+    valueProperty: 'risk_index_score',
 
-
-    // Define which property in the features to using a function for a hv_risk data source.
-    // valueProperty:function(feature) {
-    //   let risk_vp = hv_risk.filter(home => home.state_county_FIPS = feature.properties.state_county_FIPS).risk_index_score
-    //   return risk_vp;
-    // } ,
-    // valueProperty: hv_risk.risk_index_score,
+    // Define which property in the features to using a function for a hv_risk data source:
+    // valueProperty:hv_risk.forEach((home, index) => {
+    //   // console.log("home.state_county_FIPS", home.state_county_FIPS, index)
+    //   // console.log("geo_data.feat", geo_data.features[index].properties.state_county_FIPS, index)
+    // if (home.state_county_FIPS = geo_data.features[index].properties.state_county_FIPS) {
+    //     // console.log("home.risk_index_score", home.risk_index_score, index)
+        
+    //     return home.risk_index_score
+      
+    //   }
+    // }),
 
     // Set the color scale.
     scale: ['white', 'red'],
@@ -93,6 +127,17 @@ d3.json(geoJSON_github).then(function(geo_data) {
     //   //     feature.properties.DP03_16E + "<br /><br />Estimated Total Income and Benefits for Families: $" + feature.properties.DP03_75E);
     //   // }
     }).addTo(myMap);
+
+    // // Set up Colors:
+    // var myStyle = {
+    //   "color": "#ff6a00",
+    //   "weight": 2 
+    // };
+  
+    // // Set up the lines for the tectonic plates, use the style and set geoJSON tectonic plates data:
+    // L.geoJSON(geo_data, { 
+    //   style: myStyle
+    //   }).addTo(myMap);	 
  
   });
 }); 
