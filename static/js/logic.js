@@ -65,56 +65,56 @@ d3.csv(hv_risk_github).then(function(hv_risk) {
     // console.log("geo_data.features[j].properties.risk_index_score", geo_data.features[0].properties.risk_index_score)
     // console.log("dataValue", dataValue, i)
 
-  // Create a new choropleth layer.
-  geojson = L.choropleth(geo_data, {
-    // Set the color based on the risk_index_score:
-    valueProperty: 'risk_index_score',
-    // Set the color scale.
-    scale: ['white', 'red'],
-    // The number of breaks in the step range
-    steps: 10,
-    // q for quartile, e for equidistant, k for k-means
-    // ASK WHAT IS BEST FOR THIS:::::
-    mode: "k",
-    style: {
-    // Border color
-    color: "#4d4d4d", 
-    weight: 1,
-    fillOpacity: 0.8
-    },
+    // Create a new choropleth layer.
+    geojson = L.choropleth(geo_data, {
+      // Set the color based on the risk_index_score:
+      valueProperty: 'risk_index_score',
+      // Set the color scale.
+      scale: ['white', 'red'],
+      // The number of breaks in the step range
+      steps: 10,
+      // q for quartile, e for equidistant, k for k-means
+      // ASK WHAT IS BEST FOR THIS:::::
+      mode: "k",
+      style: {
+      // Border color
+      color: "#4d4d4d", 
+      weight: 1,
+      fillOpacity: 0.8
+      },
 
-      // Binding a popup to each layer
-      onEachFeature: function(feature, layer) {
-         layer.bindPopup("County Name: <strong>" + feature.properties.NAME + "</strong><br /><br />Risk Index Score: " +
-         parseFloat(feature.properties.risk_index_score).toFixed(2)); 
-       }
-    }).addTo(myMap);
+        // Binding a popup to each layer
+        onEachFeature: function(feature, layer) {
+          layer.bindPopup("County Name: <strong>" + feature.properties.NAME + "</strong><br /><br />Risk Index Score: " +
+          parseFloat(feature.properties.risk_index_score).toFixed(2)); 
+        }
+      }).addTo(myMap); // end of choropleth layer function
 
-    // Set up the legend:
-  let legend = L.control({ position: "bottomright" });
-  legend.onAdd = function() {
-    let div = L.DomUtil.create("div", "info legend");
-    let limits = geojson.options.limits;
-    let colors = geojson.options.colors;
-    let labels = [];
+      // Set up the legend:
+      let legend = L.control({ position: "bottomright" });
+      legend.onAdd = function() {
+        let div = L.DomUtil.create("div", "info legend");
+        let limits = geojson.options.limits;
+        let colors = geojson.options.colors;
+        let labels = [];
 
-    // Add the minimum and maximum.
-    let legendInfo = "<h1>National Risk Index Score</h1>" +
-      "<div class=\"labels\">" +
-        "<div class=\"min\">" + limits[0] + "</div>" +
-        "<div class=\"max\">" + limits[limits.length - 1] + "</div>" +
-      "</div>";
-    // Add legend to the html:
-    div.innerHTML = legendInfo;
-    limits.forEach(function(limit, index) {
-      labels.push("<li style=\"background-color: " + colors[index] + "\"></li>");
-    });
-    div.innerHTML += "<ul>" + labels.join("") + "</ul>";
-    return div;
-  };
-  // Adding the legend to the map
-  legend.addTo(myMap);
- 
+        // Add the minimum and maximum.
+        let legendInfo = "<h1>National Risk Index Score</h1>" +
+          "<div class=\"labels\">" +
+            "<div class=\"min\">" + limits[0] + "</div>" +
+            "<div class=\"max\">" + limits[limits.length - 1] + "</div>" +
+          "</div>";
+        // Add legend to the html:
+        div.innerHTML = legendInfo;
+        limits.forEach(function(limit, index) {
+          labels.push("<li style=\"background-color: " + colors[index] + "\"></li>");
+        });
+        div.innerHTML += "<ul>" + labels.join("") + "</ul>";
+        return div;
+      };
+      // Adding the legend to the map
+      legend.addTo(myMap);
+  
   }); // end of d3 call to github for hv_risk data- csv:
 
 }); // end of d3 call to github for geo_data- geojson:
