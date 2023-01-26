@@ -46,24 +46,24 @@ let hv_risk_github = "https://raw.githubusercontent.com/zwcrowley/Project_3_Team
 
 //   }); 
 // Set colors for choropleth:
-var lowColor = 'white'
-var highColor = 'red'
+// var lowColor = 'white'
+// var highColor = 'red'
 
 let geojson;
 // d3 call to github for hv_risk data:
 d3.csv(hv_risk_github).then(function(hv_risk) {
   console.log("hv_risk", hv_risk)
-  var dataArray = [];
-	for (var d = 0; d < hv_risk.length; d++) {
-		dataArray.push(parseFloat(hv_risk[d].risk_index_score))
-	}
-  // Pick out the min value in the risk index array:
-	var minVal = d3.min(dataArray)
-	var maxVal = d3.max(dataArray)
-	var ramp = d3.scaleLinear().domain([minVal,maxVal]).range([lowColor,highColor])
-  console.log("minVal risk_index_score", minVal)
-  console.log("maxVal risk_index_score", maxVal)
-  console.log("ramp", ramp)
+  // var dataArray = [];
+	// for (var d = 0; d < hv_risk.length; d++) {
+	// 	dataArray.push(parseFloat(hv_risk[d].risk_index_score))
+	// }
+  // // Pick out the min value in the risk index array:
+	// var minVal = d3.min(dataArray)
+	// var maxVal = d3.max(dataArray)
+	// var ramp = d3.scaleLinear().domain([minVal,maxVal]).range([lowColor,highColor])
+  // console.log("minVal risk_index_score", minVal)
+  // console.log("maxVal risk_index_score", maxVal)
+  // console.log("ramp", ramp)
 
 
   // d3 call to github for geo_data data:
@@ -91,46 +91,37 @@ d3.csv(hv_risk_github).then(function(hv_risk) {
         }
       }
     }
-    // console.log("geo_data.features[j].properties.risk_index_score", geo_data.features[0].properties)
-    console.log("geo_data.features[j].properties.risk_index_score", geo_data.features[0].properties.risk_index_score)
+    
+    // console.log("geo_data.features[j].properties.risk_index_score", geo_data.features[0].properties.risk_index_score)
+    // console.log("dataValue", dataValue, i)
 
   // Create a new choropleth layer.
   geojson = L.choropleth(geo_data, {
+    // Set the color based on the risk_index_score:
     valueProperty: 'risk_index_score',
-
-    // Define which property in the features to using a function for a hv_risk data source:
-    // valueProperty:hv_risk.forEach((home, index) => {
-    //   // console.log("home.state_county_FIPS", home.state_county_FIPS, index)
-    //   // console.log("geo_data.feat", geo_data.features[index].properties.state_county_FIPS, index)
-    // if (home.state_county_FIPS = geo_data.features[index].properties.state_county_FIPS) {
-    //     // console.log("home.risk_index_score", home.risk_index_score, index)
-        
-    //     return home.risk_index_score
-      
-    //   }
-    // }),
-
     // Set the color scale.
     scale: ['white', 'red'],
     // The number of breaks in the step range
     steps: 10,
     // q for quartile, e for equidistant, k for k-means
-    mode: "q",
+    // ASK WHAT IS BEST FOR THIS:::::
+    mode: "k",
     style: {
     // Border color
-    color: "#fff",
+    color: "#4d4d4d", 
     weight: 1,
     fillOpacity: 0.8
     },
 
-    //   // Binding a popup to each layer
-    //   // onEachFeature: function(feature, layer) {
-    //   //   layer.bindPopup("<strong>" + feature.properties.NAME + "</strong><br /><br />Estimated employed population with children age 6-17: " +
-    //   //     feature.properties.DP03_16E + "<br /><br />Estimated Total Income and Benefits for Families: $" + feature.properties.DP03_75E);
-    //   // }
+      // Binding a popup to each layer
+      onEachFeature: function(feature, layer) {
+         layer.bindPopup("County Name: <strong>" + feature.properties.NAME + "</strong><br /><br />Risk Index Score: " +
+         parseFloat(feature.properties.risk_index_score).toFixed(2)); 
+       }
     }).addTo(myMap);
 
-    // // Set up Colors:
+    // If we want to add borders to the county lines:
+    // // Set up Colors: 
     // var myStyle = {
     //   "color": "#ff6a00",
     //   "weight": 2 
