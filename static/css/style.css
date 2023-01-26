@@ -1,12 +1,28 @@
-body {
+/* body {
   padding: 0;
   margin: 0;
+} */
+
+/* html for whole page */
+html{
+  background-color: #eceeef;  
+}
+/* Change color around main-container */
+.main_container{
+  background-color: #eceeef; 
+}
+/* Map styling */
+#map {
+  position: relative;
+  height: 100%;
+}
+.graph-title {
+  font: 22px Arial, Helvetica, sans-serif;
+  color: black;
 }
 
-#map,
-body,
-html {
-  height: 100%;
+.jumbotron {
+  color: black;
 }
 
 .leaflet-popup-content {
