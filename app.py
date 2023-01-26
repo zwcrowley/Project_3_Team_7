@@ -4,13 +4,13 @@ from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine, func
 
-from flask import Flask, jsonify
+from flask import Flask, jsonify 
 from flask_cors import CORS
 
 #################################################
 # Database Setup
 #################################################
-engine = create_engine('sqlite:///output/hv_risk.sqlite')
+engine = create_engine("sqlite:///output/hv_risk.sqlite")
 
 # reflect an existing database into a new model
 Base = automap_base()
@@ -19,6 +19,8 @@ Base.prepare(autoload_with=engine)
 
 # Save reference to the table
 hv_risk = Base.classes.hv_risk_merged_data 
+Passenger = Base.classes.passenger
+
 
 #################################################
 # Flask Setup
