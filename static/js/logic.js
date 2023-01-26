@@ -7,7 +7,7 @@ var myMap = L.map("map", {
 // Adding the tile layer
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-}).addTo(myMap);
+}).addTo(myMap); 
 
 // Load the GeoJSON data.
 let geoData = "https://team-7-proj3-map.onrender.com/api/v1.0/county_bounds_data";
@@ -46,17 +46,14 @@ d3.csv(hv_risk_github).then(function(hv_risk) {
       var data_FIPS = hv_risk[i].state_county_FIPS;
       // Grab data value 
       var dataValue = parseFloat(hv_risk[i].risk_index_score); 
-      // console.log("dataValue", dataValue, i)
-
+      // Nested for loop that goes throught the geo_data json:
       // Find the corresponding state_county_FIPS inside the GeoJSON
       for (var j = 0; j < geo_data.features.length; j++) {
         var json_FIPS = geo_data.features[j].properties.state_county_FIPS;
-        // geo_data.features[j].properties.risk_index_score = null;
         // If the fips matches in both datasets:
         if (data_FIPS == json_FIPS) {
           // Copy the data value into the JSON
           geo_data.features[j].properties.risk_index_score = dataValue;
-          // console.log("geo_data.features[j].properties.risk_index_score", geo_data.features[0].properties.risk_index_score, i)   
           // Stop looking through the JSON
           break;  
         }
