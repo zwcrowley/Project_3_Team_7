@@ -113,6 +113,7 @@ d3.csv(hv_risk_github).then(function(hv_risk) {
   // Adding the legend to the map
   legend.addTo(myMap);
  
-  });
-}); 
+  }); // end of d3 call to github for hv_risk data- csv:
+
+}); // end of d3 call to github for geo_data- geojson:
 

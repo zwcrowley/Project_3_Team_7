@@ -68,18 +68,18 @@ def home_risk():
     return homes_response       
 
 # US county boundary geojson data route:
-@app.route("/api/v1.0/county_bounds_data")
-def county_lines():
-    """Return the county bounds data as json"""
-    counties = county_bounds_collection.find() 
-    # Convert object_id from the homes mongo cursor:
-    counties_json = MongoJSONEncoder().encode(list(counties))
-    # Create response:
-    cnty_response = Response(response=counties_json, status=200, mimetype="application/json")
-    # Allow cross origin
-    # cnty_response.headers.add('Access-Control-Allow-Origin', '*')
-    # Return response:
-    return cnty_response 
+# @app.route("/api/v1.0/county_bounds_data")
+# def county_lines():
+#     """Return the county bounds data as json"""
+#     counties = county_bounds_collection.find() 
+#     # Convert object_id from the homes mongo cursor:
+#     counties_json = MongoJSONEncoder().encode(list(counties))
+#     # Create response:
+#     cnty_response = Response(response=counties_json, status=200, mimetype="application/json")
+#     # Allow cross origin
+#     # cnty_response.headers.add('Access-Control-Allow-Origin', '*')
+#     # Return response:
+#     return cnty_response 
 
 if __name__ == "__main__":
     app.run(debug=True) 
