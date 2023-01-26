@@ -8,7 +8,7 @@ from bson.json_util import dumps, loads
 from typing import Any
 from bson import ObjectId
 from mongopass import mongopass_app
-# from flask_cors import CORS
+from flask_cors import CORS
 
 ################
 # Function to encode mongoDB object_id:
@@ -22,11 +22,12 @@ class MongoJSONEncoder(json.JSONEncoder):
 # Flask Setup
 #################################################
 app = Flask(__name__)
+app.config["JSON_SORT_KEYS"] = False  
 # Use flask_pymongo to set up mongo connection
 # app.config["MONGO_URI"] = mongopass_app 
 # mongo = PyMongo(app)
 # Allow cross origin:
-# CORS(app) 
+CORS(app) 
 
 ###############
 # setup mongo connection

@@ -47,26 +47,37 @@ let geojson;
 // d3 call to github:
 d3.json(geoJSON_github).then(function(geo_data) {
   console.log("geo_data", geo_data)
-
+  console.log("geo_data", geo_data)
   d3.csv(hv_risk_github).then(function(hv_risk) {
     console.log("hv_risk", hv_risk)
-    console.log("risk score", hv_risk.risk_index_score)
+    console.log("first row risk score", hv_risk[0].risk_index_score)
+    // let risk_vp = hv_risk.filter(home => home.state_county_FIPS = geo_data.features[0].properties.state_county_FIPS)[0].risk_index_score
+    // Try to set up a forEach to pull out the risk index for each feature in geoJSON data:
+    hv_risk.forEach((home, index) => {
+    if (home[index].state_county_FIPS === geo_data.features[index].properties.state_county_FIPS) {
+        console.log("home[index].risk_index_score", home[index].risk_index_score)
+        // return home[index].risk_index_score
+      }
+    })
+    // console.log("risk_vp", risk_vp)
+
+
+
   // Create a new choropleth layer.
   geojson = L.choropleth(geo_data, {
 
-    // Define which property in the features to using a function for a hv_risk data source.
-    // valueProperty:function(feature, index) {
-    //   return hv_risk.filter(home => home.state_county_FIPS = feature.properties.state_county_FIPS)[index].risk_index_score;  
-    // } ,
 
-    valueProperty:hv_risk[0].risk_index_score,
+    // Define which property in the features to using a function for a hv_risk data source.
+    // valueProperty:function(feature) {
+    //   let risk_vp = hv_risk.filter(home => home.state_county_FIPS = feature.properties.state_county_FIPS).risk_index_score
+    //   return risk_vp;
+    // } ,
+    // valueProperty: hv_risk.risk_index_score,
 
     // Set the color scale.
-    scale: ["#ffffb2", "#b10026"],
-
+    scale: ['white', 'red'],
     // The number of breaks in the step range
     steps: 10,
-
     // q for quartile, e for equidistant, k for k-means
     mode: "q",
     style: {
