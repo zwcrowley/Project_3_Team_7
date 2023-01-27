@@ -43,13 +43,13 @@ let geojson;
 d3.json(hv_risk_render).then(function(hv_risk) {
   console.log("hv_risk", hv_risk)
   // Function to initialize the first id for the charts and panel with the first Id = 940, passes that name to getData(), the on event in the next function will updata once a new id is selected from the dropdown menu:
-  function init() {
-    let firstArray = [hv_risk[0].flood_score,hv_risk[0].drought_score,hv_risk[0].heatwave_score];
-    console.log("firstArray",firstArray)
-    makeBarChart(firstArray); 
-  }
-  // makeBarChart(hv_risk)
-  init();
+  // function init() {
+  //   let firstArray = [hv_risk[0].flood_score,hv_risk[0].drought_score,hv_risk[0].heatwave_score];
+  //   console.log("firstArray",firstArray)
+  //   makeBarChart(firstArray); 
+  // }
+  // // makeBarChart(hv_risk)
+  // init();
 
 
   // d3 call to github for geo_data data- json:
@@ -113,25 +113,30 @@ d3.json(hv_risk_render).then(function(hv_risk) {
       function getData(event) {
         let county_clicked = event.target.feature.properties.state_county_FIPS;
         console.log("clicked county", county_clicked)
+        // Reset barGraph
+        // Plotly.purge(graph_1); 
 
         let barArray = [];
 
         // Loop through each state data value in the hv_risk json call:
         for (var i = 0; i < hv_risk.length; i++) {
           // Grab state_county_FIPS Name
-          var data_FIPS = parseFloat(hv_risk[i].state_county_FIPS); 
+          let data_FIPS = hv_risk[i].state_county_FIPS;  
             // If the fips matches the fips from the mouse click event:
-            if (data_FIPS = county_clicked) {
+            if (data_FIPS === county_clicked) {
               barArray.push([hv_risk[i].flood_score,hv_risk[i].drought_score,hv_risk[i].heatwave_score]);
+              console.log("barArray",barArray)
+              console.log("county_clicked",county_clicked)
+              console.log("data_FIPS",data_FIPS)
               // Stop looking throught the hv_risk data:
               break;  
             }
           }
-
-        let featureJson = event.target.feature;
-        console.log("featureJson", featureJson)
+        // let featureJson = event.target.feature;
+        // console.log("featureJson", featureJson)
         // passes barArray_x, and state_county_FIPS to makeBarChart()
-        makeBarChart(barArray)  
+        console.log("barArray",barArray)
+        makeBarChart(barArray);  
       }; // end of getData()
     
       // Set up the legend:
@@ -175,8 +180,10 @@ d3.json(hv_risk_render).then(function(hv_risk) {
 
 }); // end of d3 call to github for geo_data- geojson:
 
+
 // Function to make reactive bar chart:
 function makeBarChart(barArray) {
+  Plotly.purge(graph_1);
   // Set all the vars in the array of to object vars to build the charts, slice the top 10 and reverse them:
   let barArray_y = ["flood_score","drought_score","heatwave_score"]//, "hurricane_score", "lightning_score", "tornado_scores", "wildfire_scores","winterweather_score"]
   let barArray_x = barArray; 
@@ -218,6 +225,10 @@ function makeBarChart(barArray) {
   Plotly.newPlot("graph_1", barData, layout_bar);
 }
 
+// // Note the extra brackets around 'x' and 'y'
+// function updatePlotly(newdata) {
+//   Plotly.restyle("graph_1", "values",[newdata] ) 
+// }
 
 // function getData() {
 //   // Assign the value of the dropdown menu option to a variable:
