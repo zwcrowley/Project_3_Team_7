@@ -8,7 +8,9 @@ Objective
 The question that we would like to investigate is “Do counties that experience more natural risk disasters have lower average home prices?”. 
 
 -In order to answer this question we are first going to create a map of the United States with two layers, one layer that depicts the house prices per county and another layer that shows the natural disaster risk score per county. This will help visualize if there is a relationship between county house prices and risk of natural disasters. 
+
 -We are also going to click based bar graph that shows the natural risk score for each of the top 8 natural disasters per county.The 8 natural dsiasters that we will show will be rought, heat wave, hurricanes, coastal + river flooding, lightning, tornadoes, wildfires, and winter weather. This will help users understand what natural disasters are most common in the specific county that they click on. 
+
 -We will create a scatterplot that will show the relationship between county house prices in a state and county natural risk score per state. This will help us visualize if states that have higher natural disaster risk scores in there counties also have lower house prices per county. 
 
 Data
