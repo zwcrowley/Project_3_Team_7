@@ -11,22 +11,18 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(myMap); 
 
-// Load the GeoJSON data.
-let geoData = "https://team-7-proj3-map.onrender.com/api/v1.0/county_bounds_data";
-
-// Load the hv_risk data.
-let hv_risk = "https://team-7-proj3-map.onrender.com/api/v1.0/home_value_risk_data";
-
-// Github links:
+// Load the GeoJSON data from Github link of our repo:
 // geoJSON of counties:
-let geoJSON_github = "https://raw.githubusercontent.com/zwcrowley/Project_3_Team_7/main/output/us_county_bounds_new.json"
+let geoData = "https://raw.githubusercontent.com/zwcrowley/Project_3_Team_7/main/output/us_county_bounds_new.json";
 
-// Github links:
-// csv of hv_risk merged data:
-let hv_risk_github = "https://raw.githubusercontent.com/zwcrowley/Project_3_Team_7/main/output/hv_risk_df.csv"
-
-// Render link- json of hv_risk merged data:
+// Load the hv_risk data:
+// json of merged hv_risk data:
 let hv_risk_render = "https://team-7-proj3-map.onrender.com/api/v1.0/home_value_risk_data"
+
+
+// // Github links:
+// // csv of hv_risk merged data:
+// let hv_risk_github = "https://raw.githubusercontent.com/zwcrowley/Project_3_Team_7/main/output/hv_risk_df.csv"
 
 // // Logan Powell github link
 // let geoJSON_github_LP = "https://raw.githubusercontent.com/loganpowell/census-geojson/master/GeoJSON/500k/2021/county.json"
@@ -35,25 +31,28 @@ let hv_risk_render = "https://team-7-proj3-map.onrender.com/api/v1.0/home_value_
 // Alt api from opendatasoft.com:
 // let geoData2 = "https://public.opendatasoft.com/api/records/1.0/search/?dataset=us-county-boundaries&q=&rows=3233"
 
-
+////////////////////////////////////
 // Set up a var for the choropleth map:
 let geojson;
-
+////////////////////////////////////
 // d3 call to github for hv_risk data- csv:
 d3.json(hv_risk_render).then(function(hv_risk) {
   console.log("hv_risk", hv_risk)
 
+  ////////////////////////////////////
   // d3 call to github for geo_data data- json:
-  d3.json(geoJSON_github).then(function(geo_data) {
+  d3.json(geoData).then(function(geo_data) {
     console.log("geo_data", geo_data)
 
+    //////////////////
     // Function to initialize the first county hv_risk data, passes that to getData(), the on event in the next function will updata once a new county is selected from the map:
     function init() {
       let firstCounty = hv_risk[0];
       console.log("firstCounty",firstCounty)
       makeBarChart(firstCounty); 
       } // end of init()
-      
+
+    ////////////////////////////////////
     // Nested for loop to save the risk_index_score inside the geojson properties for each feature:
     // Loop through each state data value in the hv_risk json file:
     for (var i = 0; i < hv_risk.length; i++) {
@@ -74,7 +73,8 @@ d3.json(hv_risk_render).then(function(hv_risk) {
         }
       }
     }
-    
+
+    ////////////////////////////////////
     // Create a new choropleth layer.
     geojson = L.choropleth(geo_data, {
       // Set the color based on the risk_index_score:
@@ -92,17 +92,17 @@ d3.json(hv_risk_render).then(function(hv_risk) {
       weight: 1,
       fillOpacity: 0.8
       },
-        // Binding a popup to each layer
+        // Binding a popup to each layer:
         onEachFeature: function(feature, layer) {
-          layer.bindPopup("County Name: <strong>" + feature.properties.NAME +"<br /><br />"+ feature.properties.state_county_FIPS + "</strong><br /><br />Risk Index Score: " +
-          parseFloat(feature.properties.risk_index_score).toFixed(2)); 
+          layer.bindPopup("County Name: <strong>" + feature.properties.NAME +"<br /><br />"+ feature.properties.state_county_FIPS + "</strong><br /><br />Risk Index Score: " + parseFloat(feature.properties.risk_index_score).toFixed(2)); 
+          // Sends the data from a mouse click on the map to getData():
           layer.on({
             click: getData
           }); 
         } 
       }).addTo(myMap); // end of choropleth layer function
 
-      
+      ////////////////////////////////////
       // Set up the legend:
       let legend = L.control({ position: "bottomright" });
       legend.onAdd = function() {
@@ -112,7 +112,7 @@ d3.json(hv_risk_render).then(function(hv_risk) {
         let labels = [];
 
         // Add the minimum and maximum.
-        let legendInfo = "<h1>National Risk Index Score</h1>" +
+        let legendInfo = "<h2>National Risk Index Score</h2>" +
           "<div class=\"labels\">" +
             "<div class=\"min\">" + limits[0] + "</div>" +
             "<div class=\"max\">" + limits[limits.length - 1] + "</div>" +
@@ -128,6 +128,7 @@ d3.json(hv_risk_render).then(function(hv_risk) {
       // Adding the legend to the map
       legend.addTo(myMap);
 
+      ////////////////////////////////////
       // Function to return data where mouseclick occured:
       function getData(event) {
         // Save the state_county_FIPS as county_clicked from the clicked on county on map:
@@ -142,27 +143,23 @@ d3.json(hv_risk_render).then(function(hv_risk) {
         makeBarChart(hv_risk_Matched); 
       }; // end of getData()
 
-      // Function to make reactive bar chart:
+      //////////////////
+      // Function to make reactive horizontal bar chart of 8 individual weather/climate risks using the county clicked on the map:
       function makeBarChart(barArray) {
+        // Set the passed array to a new var "bar_new":
         let bar_new = barArray 
-        console.log("bar_new",bar_new)
         // Set up nice labesles forf all of the risk vars we want to display from the array of bar_new:
-        let barArray_y = ["Drought","Flood","Heatwave", "Hurricane", "Lightning", "Tornado", "Wildfire","Winter<br>Weather"].reverse();
+        let y_labels = ["Drought","Flood","Heatwave", "Hurricane", "Lightning", "Tornado", "Wildfire","Winter<br>Weather"].reverse();
         // Set all the vars in the array of bar_new to object vars to build the charts and reverse them:
         let barArray_x = [bar_new.drought_score, bar_new.flood_score,bar_new.heatwave_score, bar_new.hurricane_score, bar_new.lightning_score,bar_new.tornado_scores, bar_new.wildfire_scores, bar_new.winterweather_score].reverse(); 
 
-        console.log("barArray_x", barArray_x)
-        // let bar_risk = barArray.reverse();
-        // let bar_labels = newdata.otu_labels.slice(0, 10).reverse();
-        // let sample_values = newdata.sample_values.slice(0, 10).reverse();
-        // Re-format the otu_ids as labels for the y-axis:
-        // let y_labels = otu_ids.map(otu_id => `OTU ${otu_id}`);
+        
         // Trace1 for the data of 8 risks:
         let trace1 = {
           x: barArray_x,
-          y: barArray_y,
-          // text: otu_ids,
-          // hovertext: otu_labels,
+          y: y_labels,
+          text: y_labels, 
+          hovertext: y_labels,
           name: "Bar1",
           type: "bar",
           orientation: "h"
@@ -186,7 +183,11 @@ d3.json(hv_risk_render).then(function(hv_risk) {
         // Render the plot to the div tag with id "bar", and pass barData and layout:
         Plotly.newPlot("graph_1", barData, layout_bar);
       } // end of makeBarChart() call 
-      init();
+
+    //////////////////
+    // Call the initial function to set up the first graph:
+    init();
+
   }); // end of d3 call to github for geo_data- geojson.
 
 }); // end of d3 call to render/Flask app for hv_risk data- json.
