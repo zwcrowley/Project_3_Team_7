@@ -148,13 +148,13 @@ d3.json(hv_risk_render).then(function(hv_risk) {
       function makeBarChart(barArray) {
         // Set the passed array to a new var "bar_new":
         let bar_new = barArray 
+        // Set up colors for bars:
+        barColors = ["#084594", "#990000", "#fdae6b", "#737373", "#762a83","#e7298a","#9ecae1", "#fe9929"]  
         // Set up nice labesles forf all of the risk vars we want to display from the array of bar_new:
         let y_labels = ["Drought","Flood","Heatwave", "Hurricane", "Lightning", "Tornado", "Wildfire","Winter<br>Weather"].reverse();
         // Set all the vars in the array of bar_new to object vars to build the charts and reverse them:
         let barArray_x = [bar_new.drought_score, bar_new.flood_score,bar_new.heatwave_score, bar_new.hurricane_score, bar_new.lightning_score,bar_new.tornado_scores, bar_new.wildfire_scores, bar_new.winterweather_score].reverse(); 
-        console.log("bar_new",bar_new) 
 
-        
         // Trace1 for the data of 8 risks:
         let trace1 = {
           x: barArray_x,
@@ -162,6 +162,9 @@ d3.json(hv_risk_render).then(function(hv_risk) {
           text: y_labels, 
           hovertext: y_labels,
           name: "Bar1",
+          marker:{
+            color: barColors
+          },
           type: "bar",
           orientation: "h"
         };
