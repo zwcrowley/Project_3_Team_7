@@ -47,8 +47,8 @@ def home_risk():
    # Create our session (link) from Python to the DB
     session = Session(engine)
 
-    """Return a list of passenger data including the name, age, and sex of each passenger"""
-    # Query all passengers
+    """Return a json of the columns below"""
+    # Query all columns that we want from the dataset:
     results = session.query(hv_risk.index, hv_risk.state_county_FIPS, hv_risk.zhvi_yr_growth,hv_risk.risk_index_score).all()
     
     session.close()

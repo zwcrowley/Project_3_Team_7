@@ -22,7 +22,11 @@ let hv_risk = "https://team-7-proj3-map.onrender.com/api/v1.0/home_value_risk_da
 let geoJSON_github = "https://raw.githubusercontent.com/zwcrowley/Project_3_Team_7/main/output/us_county_bounds_new.json"
 
 // Github links:
+// csv of hv_risk merged data:
 let hv_risk_github = "https://raw.githubusercontent.com/zwcrowley/Project_3_Team_7/main/output/hv_risk_df.csv"
+
+// Render link- json of hv_risk merged data:
+let hv_risk_render = "https://team-7-proj3-map.onrender.com/api/v1.0/home_value_risk_data"
 
 // // Logan Powell github link
 // let geoJSON_github_LP = "https://raw.githubusercontent.com/loganpowell/census-geojson/master/GeoJSON/500k/2021/county.json"
@@ -36,7 +40,7 @@ let hv_risk_github = "https://raw.githubusercontent.com/zwcrowley/Project_3_Team
 let geojson;
 
 // d3 call to github for hv_risk data- csv:
-d3.csv(hv_risk_github).then(function(hv_risk) {
+d3.json(hv_risk_render).then(function(hv_risk) {
   console.log("hv_risk", hv_risk)
   makeBarChart(hv_risk)
 
@@ -47,15 +51,15 @@ d3.csv(hv_risk_github).then(function(hv_risk) {
     // Loop through each state data value in the .csv file
     for (var i = 0; i < hv_risk.length; i++) {
       // Grab state_county_FIPS Name
-      var data_FIPS = hv_risk[i].state_county_FIPS;
+      var data_FIPS = parseFloat(hv_risk[i].state_county_FIPS); 
       // Grab data value 
       var dataValue = parseFloat(hv_risk[i].risk_index_score); 
       // Nested for loop that goes throught the geo_data json:
       // Find the corresponding state_county_FIPS inside the GeoJSON
       for (var j = 0; j < geo_data.features.length; j++) {
-        var json_FIPS = geo_data.features[j].properties.state_county_FIPS;
+        var json_FIPS = parseFloat(geo_data.features[j].properties.state_county_FIPS); 
         // If the fips matches in both datasets:
-        if (data_FIPS == json_FIPS) {
+        if (data_FIPS === json_FIPS) {
           // Copy the data value into the JSON
           geo_data.features[j].properties.risk_index_score = dataValue;
           // Stop looking through the JSON
@@ -66,6 +70,9 @@ d3.csv(hv_risk_github).then(function(hv_risk) {
     
     // console.log("geo_data.features[j].properties.risk_index_score", geo_data.features[0].properties.risk_index_score)
     // console.log("dataValue", dataValue, i)
+    function zoomToFeature(e) {
+      myMap.fitBounds(e.target.getBounds());
+    }
 
     // Create a new choropleth layer.
     geojson = L.choropleth(geo_data, {
@@ -88,8 +95,22 @@ d3.csv(hv_risk_github).then(function(hv_risk) {
         onEachFeature: function(feature, layer) {
           layer.bindPopup("County Name: <strong>" + feature.properties.NAME + "</strong><br /><br />Risk Index Score: " +
           parseFloat(feature.properties.risk_index_score).toFixed(2));
+          layer.on({
+            click: getData
+          }); 
         } 
       }).addTo(myMap); // end of choropleth layer function
+
+      // Function to return data where mouseclick occured:
+      function getData(event) {
+        let county_clicked = event.target.feature.properties.state_county_FIPS;
+        console.log("clicked county", county_clicked)
+        let featureJson = event.target.feature;
+        console.log("featureJson", featureJson)
+        makeBarChart(county_clicked) // passes county fips to makeBarChart()
+      }
+    
+     
 
       // Set up the legend:
       let legend = L.control({ position: "bottomright" });
@@ -115,52 +136,23 @@ d3.csv(hv_risk_github).then(function(hv_risk) {
       };
       // Adding the legend to the map
       legend.addTo(myMap);
+      
+      // Mouse Click:
+      // myMap.on('click', function(e) {
+      //   alert(e.latlng);
+      //   console.log(e);
+      //   // download something
+      //   /* if(something == something){
+      //         e.preventDefault(); 
+      //         window.location.href = 'downloadMe/riverData.doc';
+      //      }
+      //   */
+      // } );
   
   }); // end of d3 call to github for hv_risk data- csv:
 
 }); // end of d3 call to github for geo_data- geojson:
 
-// Function to highlight the feature on a mouseover:
-// function highlightFeature(e) {
-//   var layer = e.target;
-
-//   layer.setStyle({
-//       weight: 5,
-//       color: '#666',
-//       dashArray: '',
-//       fillOpacity: 0.7
-//   });
-
-//   layer.bringToFront();
-// }
-// Here we get access to the layer that was hovered through e.target, set a thick grey border on the layer as our highlight effect, also bringing it to the front so that the border doesn’t clash with nearby states.
-
-// Next we’ll define what happens on mouseout:
-
-// function resetHighlight(e) {
-//   geojson.resetStyle(e.target);
-// }
-// // The handy geojson.resetStyle method will reset the layer style to its default state (defined by our style function). For this to work, make sure our GeoJSON layer is accessible through the geojson variable by defining it before our listeners and assigning the layer to it later:
-
-// let geojson_events;
-// // ... our listeners
-// // As an additional touch, let’s define a click listener that zooms to the state:
-// function zoomToFeature(e) {
-//   map.fitBounds(e.target.getBounds());
-// }
-// // Now we’ll use the onEachFeature option to add the listeners on our state layers:
-// function onEachFeature(feature, layer) {
-//   layer.on({
-//       mouseover: highlightFeature,
-//       mouseout: resetHighlight,
-//       click: zoomToFeature
-//   });
-// }
-
-// geojson_events = L.geoJson(geo_data, {
-//   style: style,
-//   onEachFeature: onEachFeature
-// }).addTo(map);
 
 
 // function getData() {
@@ -231,6 +223,8 @@ d3.csv(hv_risk_github).then(function(hv_risk) {
 //   Plotly.newPlot("bar", barData, layout_bar); 
 // }
 
+
+// Function to make reactive bar chart:
 function makeBarChart(hv_risk) {
   // Set all the vars in the array of sampleMatched (newdata) to object vars to build the charts, slice the top 10 and reverse them:
   let barArray_x = ["coastal_flooding_score","drought_score","heatwave_score"]//, "hurricane_score", "lightning_score", "river_flooding_score","tornado_scores", "wildfire_scores","winterweather_score"]
@@ -240,7 +234,7 @@ function makeBarChart(hv_risk) {
   // let sample_values = newdata.sample_values.slice(0, 10).reverse();
   // Re-format the otu_ids as labels for the y-axis:
   // let y_labels = otu_ids.map(otu_id => `OTU ${otu_id}`);
-  // Trace1 for the top 10 belly button data:
+  // Trace1 for the data of 8 risks:
   let trace1 = {
     x: barArray_x,
     y: barArray_y,
