@@ -130,50 +130,26 @@ d3.json(hv_risk_render).then(function(hv_risk) {
 
       // Function to return data where mouseclick occured:
       function getData(event) {
+        // Save the state_county_FIPS as county_clicked from the clicked on county on map:
         let county_clicked = event.target.feature.properties.state_county_FIPS;
         console.log("clicked county", county_clicked)
-        // Reset barGraph
-        // Plotly.purge(graph_1); 
-
-        // let barArray = [];
-
-        // Next, get data for the bar chart and the bubble chart:
         
-        // Filter the samples to match the chosen value in the dropdown menu= dataValue, add [0] to the end to pull out that sample key:
+        // Filter hv_risk to match the chosen county from the map, add [0] to the end to pull out that array from hv_risk data:
         let hv_risk_Matched = hv_risk.filter(county => county.state_county_FIPS === county_clicked)[0]; 
         console.log("hv_risk_Matched",hv_risk_Matched)
         // Pass hv_risk_Matched to all of the charts:
         // Call "makeBarChart" function to pass the hv_risk_Matched to it: 
         makeBarChart(hv_risk_Matched); 
-
-        // // Loop through each state data value in the hv_risk json call:
-        // for (var i = 0; i < hv_risk.length; i++) {
-        //   // Grab state_county_FIPS Name
-        //   let data_FIPS = hv_risk[i].state_county_FIPS;  
-        //     // If the fips matches the fips from the mouse click event:
-        //     if (data_FIPS === county_clicked) {
-        //       barArray.push([hv_risk[i].flood_score,hv_risk[i].drought_score,hv_risk[i].heatwave_score]);
-        //       console.log("barArray",barArray)
-        //       console.log("county_clicked",county_clicked)
-        //       console.log("data_FIPS",data_FIPS)
-        //       // Stop looking throught the hv_risk data:
-        //       break;  
-        //     }
-        //   }
-        // let featureJson = event.target.feature;
-        // console.log("featureJson", featureJson)
-        // passes barArray_x, and state_county_FIPS to makeBarChart()
-        // makeBarChart(barArray);  
       }; // end of getData()
 
       // Function to make reactive bar chart:
       function makeBarChart(barArray) {
         let bar_new = barArray 
         console.log("bar_new",bar_new)
-        // Set all the vars in the array of to object vars to build the charts, slice the top 10 and reverse them:
-        let barArray_y = ["flood_score","drought_score","heatwave_score"]//, "hurricane_score", "lightning_score", "tornado_scores", "wildfire_scores","winterweather_score"]
-        // let barArray_x = barArray; 
-        let barArray_x = [bar_new.flood_score,bar_new.drought_score,bar_new.heatwave_score].reverse(); 
+        // Set up nice labesles forf all of the risk vars we want to display from the array of bar_new:
+        let barArray_y = ["Drought","Flood","Heatwave", "Hurricane", "Lightning", "Tornado", "Wildfire","Winter<br>Weather"].reverse();
+        // Set all the vars in the array of bar_new to object vars to build the charts and reverse them:
+        let barArray_x = [bar_new.drought_score, bar_new.flood_score,bar_new.heatwave_score, bar_new.hurricane_score, bar_new.lightning_score,bar_new.tornado_scores, bar_new.wildfire_scores, bar_new.winterweather_score].reverse(); 
 
         console.log("barArray_x", barArray_x)
         // let bar_risk = barArray.reverse();
@@ -197,7 +173,7 @@ d3.json(hv_risk_render).then(function(hv_risk) {
 
         // Apply a title to the layout and margins, pull the ID for the title:
         let layout_bar = {
-          title: `<b>Bar Chart</b>`,
+          title: `<b>Risk Scores for Selected County</b>`,
           margin: {
             l: 100,
             r: 100,
