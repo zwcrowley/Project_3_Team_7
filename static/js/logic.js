@@ -136,7 +136,7 @@ d3.json(hv_risk_render).then(function(hv_risk) {
         console.log("clicked county", county_clicked)
         
         // Filter hv_risk to match the chosen county from the map, add [0] to the end to pull out that array from hv_risk data:
-        let hv_risk_Matched = hv_risk.filter(county => county.state_county_FIPS === county_clicked)[0]; 
+        let hv_risk_Matched = hv_risk.filter(county => county.state_county_FIPS == county_clicked)[0]; 
         console.log("hv_risk_Matched",hv_risk_Matched)
         // Pass hv_risk_Matched to all of the charts:
         // Call "makeBarChart" function to pass the hv_risk_Matched to it: 
@@ -152,6 +152,7 @@ d3.json(hv_risk_render).then(function(hv_risk) {
         let y_labels = ["Drought","Flood","Heatwave", "Hurricane", "Lightning", "Tornado", "Wildfire","Winter<br>Weather"].reverse();
         // Set all the vars in the array of bar_new to object vars to build the charts and reverse them:
         let barArray_x = [bar_new.drought_score, bar_new.flood_score,bar_new.heatwave_score, bar_new.hurricane_score, bar_new.lightning_score,bar_new.tornado_scores, bar_new.wildfire_scores, bar_new.winterweather_score].reverse(); 
+        console.log("bar_new",bar_new) 
 
         
         // Trace1 for the data of 8 risks:
@@ -170,7 +171,7 @@ d3.json(hv_risk_render).then(function(hv_risk) {
 
         // Apply a title to the layout and margins, pull the ID for the title:
         let layout_bar = {
-          title: `<b>Risk Scores for Selected County</b>`,
+          title: `<b>Risk Scores for ${bar_new.county_name} County</b>`,
           margin: {
             l: 100,
             r: 100,
