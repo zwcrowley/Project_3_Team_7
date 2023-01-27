@@ -42,7 +42,15 @@ let geojson;
 // d3 call to github for hv_risk data- csv:
 d3.json(hv_risk_render).then(function(hv_risk) {
   console.log("hv_risk", hv_risk)
-  makeBarChart(hv_risk)
+  // Function to initialize the first id for the charts and panel with the first Id = 940, passes that name to getData(), the on event in the next function will updata once a new id is selected from the dropdown menu:
+  function init() {
+    let firstArray = [hv_risk[0].flood_score,hv_risk[0].drought_score,hv_risk[0].heatwave_score];
+    console.log("firstArray",firstArray)
+    makeBarChart(firstArray); 
+  }
+  // makeBarChart(hv_risk)
+  init();
+
 
   // d3 call to github for geo_data data- json:
   d3.json(geoJSON_github).then(function(geo_data) {
@@ -105,13 +113,27 @@ d3.json(hv_risk_render).then(function(hv_risk) {
       function getData(event) {
         let county_clicked = event.target.feature.properties.state_county_FIPS;
         console.log("clicked county", county_clicked)
+
+        let barArray = [];
+
+        // Loop through each state data value in the hv_risk json call:
+        for (var i = 0; i < hv_risk.length; i++) {
+          // Grab state_county_FIPS Name
+          var data_FIPS = parseFloat(hv_risk[i].state_county_FIPS); 
+            // If the fips matches the fips from the mouse click event:
+            if (data_FIPS = county_clicked) {
+              barArray.push([hv_risk[i].flood_score,hv_risk[i].drought_score,hv_risk[i].heatwave_score]);
+              // Stop looking throught the hv_risk data:
+              break;  
+            }
+          }
+
         let featureJson = event.target.feature;
         console.log("featureJson", featureJson)
-        makeBarChart(county_clicked) // passes county fips to makeBarChart()
-      }
+        // passes barArray_x, and state_county_FIPS to makeBarChart()
+        makeBarChart(barArray)  
+      }; // end of getData()
     
-     
-
       // Set up the legend:
       let legend = L.control({ position: "bottomright" });
       legend.onAdd = function() {
@@ -153,6 +175,48 @@ d3.json(hv_risk_render).then(function(hv_risk) {
 
 }); // end of d3 call to github for geo_data- geojson:
 
+// Function to make reactive bar chart:
+function makeBarChart(barArray) {
+  // Set all the vars in the array of to object vars to build the charts, slice the top 10 and reverse them:
+  let barArray_y = ["flood_score","drought_score","heatwave_score"]//, "hurricane_score", "lightning_score", "tornado_scores", "wildfire_scores","winterweather_score"]
+  let barArray_x = barArray; 
+  // let barArray_x = [hv_risk[0].flood_score,hv_risk[0].drought_score,hv_risk[0].heatwave_score]; 
+
+  console.log("barArray_x", barArray_x)
+  // let bar_risk = barArray.reverse();
+  // let bar_labels = newdata.otu_labels.slice(0, 10).reverse();
+  // let sample_values = newdata.sample_values.slice(0, 10).reverse();
+  // Re-format the otu_ids as labels for the y-axis:
+  // let y_labels = otu_ids.map(otu_id => `OTU ${otu_id}`);
+  // Trace1 for the data of 8 risks:
+  let trace1 = {
+    x: barArray_x,
+    y: barArray_y,
+    // text: otu_ids,
+    // hovertext: otu_labels,
+    name: "Bar1",
+    type: "bar",
+    orientation: "h"
+  };
+  // add the trace1 to a barData array:
+  var barData = [trace1];
+  console.log("barData", barData) 
+
+  // Apply a title to the layout and margins, pull the ID for the title:
+  let layout_bar = {
+    title: `<b>Bar Chart</b>`,
+    margin: {
+      l: 100,
+      r: 100,
+      t: 100,
+      b: 100
+    }
+  };
+  console.log("layout_bar", layout_bar)  
+
+  // Render the plot to the div tag with id "bar", and pass barData and layout:
+  Plotly.newPlot("graph_1", barData, layout_bar);
+}
 
 
 // function getData() {
@@ -224,38 +288,3 @@ d3.json(hv_risk_render).then(function(hv_risk) {
 // }
 
 
-// Function to make reactive bar chart:
-function makeBarChart(hv_risk) {
-  // Set all the vars in the array of sampleMatched (newdata) to object vars to build the charts, slice the top 10 and reverse them:
-  let barArray_x = ["coastal_flooding_score","drought_score","heatwave_score"]//, "hurricane_score", "lightning_score", "river_flooding_score","tornado_scores", "wildfire_scores","winterweather_score"]
-  let barArray_y = [hv_risk[0].coastal_flooding_score,hv_risk[0].drought_score,hv_risk[0].heatwave_score]
-  // let bar_risk = barArray.reverse();
-  // let bar_labels = newdata.otu_labels.slice(0, 10).reverse();
-  // let sample_values = newdata.sample_values.slice(0, 10).reverse();
-  // Re-format the otu_ids as labels for the y-axis:
-  // let y_labels = otu_ids.map(otu_id => `OTU ${otu_id}`);
-  // Trace1 for the data of 8 risks:
-  let trace1 = {
-    x: barArray_x,
-    y: barArray_y,
-    // text: otu_ids,
-    // hovertext: otu_labels,
-    name: "Bar1",
-    type: "bar"
-    // orientation: "h"
-  };
-  // add the trace1 to a barData array:
-  var barData = [trace1];
-  // Apply a title to the layout and margins, pull the ID for the title:
-  let layout_bar = {
-    title: `<b>Bar Chart</b>`,
-    margin: {
-      l: 75,
-      r: 0,
-      t: 50,
-      b: 50
-    }
-  };
-  // Render the plot to the div tag with id "bar", and pass barData and layout:
-  Plotly.newPlot("graph_1", barData, layout_bar);
-}
