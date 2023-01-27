@@ -25,7 +25,7 @@ let hv_risk_render = "https://team-7-proj3-map.onrender.com/api/v1.0/home_value_
 // let hv_risk_github = "https://raw.githubusercontent.com/zwcrowley/Project_3_Team_7/main/output/hv_risk_df.csv"
 
 // // Logan Powell github link
-// let geoJSON_github_LP = "https://raw.githubusercontent.com/loganpowell/census-geojson/master/GeoJSON/500k/2021/county.json"
+let geoJSON_github_LP = "https://raw.githubusercontent.com/loganpowell/census-geojson/master/GeoJSON/500k/2021/county.json"
 
 
 // Alt api from opendatasoft.com:
@@ -41,7 +41,7 @@ d3.json(hv_risk_render).then(function(hv_risk) {
 
   ////////////////////////////////////
   // d3 call to github for geo_data data- json:
-  d3.json(geoData).then(function(geo_data) {
+  d3.json(geoJSON_github_LP).then(function(geo_data) {
     console.log("geo_data", geo_data)
 
     //////////////////
@@ -60,16 +60,18 @@ d3.json(hv_risk_render).then(function(hv_risk) {
       let data_FIPS = parseFloat(hv_risk[i].state_county_FIPS); 
       // Grab risk_index_score and set to var dataValue:
       let dataValue = parseFloat(hv_risk[i].risk_index_score); 
+      console.log("data_FIPS", data_FIPS)
       // Nested for loop that goes throught the geo_data json:
       // Find the corresponding state_county_FIPS inside the GeoJSON
       for (var j = 0; j < geo_data.features.length; j++) {
-        let json_FIPS = parseFloat(geo_data.features[j].properties.state_county_FIPS); 
+        let geo_FIPS = parseFloat(geo_data.features[j].properties.GEOID); 
+        // console.log("geo_FIPS", geo_FIPS) 
         // If the fips matches in both datasets:
-        if (data_FIPS === json_FIPS) {
-          // Copy the data value into the JSON
-          geo_data.features[j].properties.risk_index_score = dataValue;
-          // Stop looking through the JSON
-          break;  
+        if (data_FIPS === geo_FIPS) {
+        //   // Copy the data value into the JSON
+        geo_data.features[j].properties.risk_index_score = dataValue;
+        //   // Stop looking through the JSON
+        break;  
         }
       }
     }
@@ -101,6 +103,25 @@ d3.json(hv_risk_render).then(function(hv_risk) {
           }); 
         } 
       }).addTo(myMap); // end of choropleth layer function
+
+      ////////////////////////////////////
+      // Create a new marker cluster group.
+      // let markers = L.markerClusterGroup();
+      // // Loop through the data.
+      // for (let i = 0; i < response.length; i++) {
+      //   // Set the data location property to a variable.
+      //   let location = response[i].location;
+
+      //   // Check for the location property.
+      //   if (location) {
+
+      //     // Add a new marker to the cluster group, and bind a popup.
+      //     markers.addLayer(L.marker([location.coordinates[1], location.coordinates[0]])
+      //       .bindPopup(response[i].descriptor));
+      //   }
+      // }
+      // // Add our marker cluster layer to the map.
+      // myMap.addLayer(markers);
 
       ////////////////////////////////////
       // Set up the legend:
