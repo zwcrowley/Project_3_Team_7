@@ -59,8 +59,8 @@ d3.json(hv_risk_render).then(function(hv_risk) {
       // Grab state_county_FIPS from hv_risk data:
       let data_FIPS = parseFloat(hv_risk[i].state_county_FIPS); 
       // Grab risk_index_score and set to var dataValue:
-      let dataValue = parseFloat(hv_risk[i].risk_index_score); 
-      console.log("data_FIPS", data_FIPS)
+      let risk_dataValue = parseFloat(hv_risk[i].risk_index_score); 
+      let hv_dataValue = parseFloat(hv_risk[i].zhvi_yr_growth); 
       // Nested for loop that goes throught the geo_data json:
       // Find the corresponding state_county_FIPS inside the GeoJSON
       for (var j = 0; j < geo_data.features.length; j++) {
@@ -69,8 +69,9 @@ d3.json(hv_risk_render).then(function(hv_risk) {
         // If the fips matches in both datasets:
         if (data_FIPS === geo_FIPS) {
         //   // Copy the data value into the JSON
-        geo_data.features[j].properties.risk_index_score = dataValue;
-        //   // Stop looking through the JSON
+        geo_data.features[j].properties.risk_index_score = risk_dataValue;
+        geo_data.features[j].properties.zhvi_yr_growth = hv_dataValue; 
+        //   // Stop looking through the JSON 
         break;  
         }
       }
@@ -106,18 +107,17 @@ d3.json(hv_risk_render).then(function(hv_risk) {
 
       ////////////////////////////////////
       // Create a new marker cluster group.
-      // let markers = L.markerClusterGroup();
+      let markers = L.markerClusterGroup();
       // // Loop through the data.
-      // for (let i = 0; i < response.length; i++) {
+      // for (let i = 0; i < geo_data.features.length; i++) {
       //   // Set the data location property to a variable.
-      //   let location = response[i].location;
+      //   let location = geo_data.features[i].location;
 
       //   // Check for the location property.
       //   if (location) {
-
       //     // Add a new marker to the cluster group, and bind a popup.
       //     markers.addLayer(L.marker([location.coordinates[1], location.coordinates[0]])
-      //       .bindPopup(response[i].descriptor));
+      //       .bindPopup(geo_data.features[j].properties.zhvi_yr_growth));
       //   }
       // }
       // // Add our marker cluster layer to the map.
@@ -153,7 +153,7 @@ d3.json(hv_risk_render).then(function(hv_risk) {
       // Function to return data where mouseclick occured:
       function getData(event) {
         // Save the state_county_FIPS as county_clicked from the clicked on county on map:
-        let county_clicked = event.target.feature.properties.state_county_FIPS;
+        let county_clicked = event.target.feature.properties.GEOID;
         console.log("clicked county", county_clicked)
         
         // Filter hv_risk to match the chosen county from the map, add [0] to the end to pull out that array from hv_risk data:
