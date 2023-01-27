@@ -15,12 +15,11 @@ engine = create_engine("sqlite:///output/hv_risk.sqlite")
 # reflect an existing database into a new model
 Base = automap_base()
 # reflect the tables
-Base.prepare(autoload_with=engine)
+Base.prepare(autoload_with=engine, reflect=True)
+print(Base.classes)
 
 # Save reference to the table
-hv_risk = Base.classes.hv_risk_merged_data 
-Passenger = Base.classes.passenger
-
+hv_risk = Base.classes.hv_risk
 
 #################################################
 # Flask Setup
@@ -51,7 +50,7 @@ def home_risk():
     """Return a list of passenger data including the name, age, and sex of each passenger"""
     # Query all passengers
     results = session.query(hv_risk.index, hv_risk.state_county_FIPS, hv_risk.zhvi_yr_growth,hv_risk.risk_index_score).all()
-
+    
     session.close()
 
     # Create a dictionary from the row data and append to a list of all_passengers
@@ -64,7 +63,7 @@ def home_risk():
         hv_risk_dict["risk_index_score"] = risk_index_score
         all_hv_risk.append(hv_risk_dict)
 
-    return jsonify(all_hv_risk) 
+    return jsonify(all_hv_risk)  
 
 if __name__ == "__main__":
     app.run(debug=True) 
