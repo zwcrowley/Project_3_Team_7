@@ -247,6 +247,37 @@ d3.json(hv_risk_render).then(function(hv_risk) {
 }); // end of d3 call to render/Flask app for hv_risk data- json.
 
 
+//Adding ScatterPlot
+
+function makeScatterplot(scatterArray) {
+  let scatter_new = scatterArray
+  let scatterArray_y = [scatter_new.risk_index_score]
+  let scatterArray_x = [scatter_new.home_values_Dec_2022]; 
+
+  let trace1 = {
+    x: scatterArray_x,
+    y: scatterArray_y,
+    name: "graph2",
+    mode: "markers",
+    type: "scatter",
+    orientation: "h"
+  };
+  var scatterData = [trace1];
+  console.log("scatterData", scatterData) 
+
+  let layout_scatter = {
+    title: `<b>Scatter Plot</b>`,
+    margin: {
+      l: 100,
+      r: 100,
+      t: 100,
+      b: 100
+    }
+  };
+  console.log("layout_scatter", layout_scatter)  
+  Plotly.newPlot("graph_2", scatterData, layout_scatter);
+}
+
 
 
 
