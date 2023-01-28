@@ -1,26 +1,26 @@
 // Initialize all the LayerGroups that we'll use.
 // Set layers at three for the home growth scale: low = below iqr, average = within iqr, high =
-let layers = {
-  Very_Low_growth: new L.LayerGroup(),
-  Low_growth: new L.LayerGroup(),
-  Average_growth: new L.LayerGroup(),
-  High_growth: new L.LayerGroup(),
-  Very_High_growth: new L.LayerGroup()
-};
+// let layers = {
+//   Very_Low_growth: new L.LayerGroup(),
+//   Low_growth: new L.LayerGroup(),
+//   Average_growth: new L.LayerGroup(),
+//   High_growth: new L.LayerGroup(),
+//   Very_High_growth: new L.LayerGroup()
+// };
 
 // Creating the map object
 let myMap = L.map("map", {
   center: [36, -96],
   zoomDelta: 0.2, // Sets the zoom per click 
   zoomSnap: 0.1,  // Sets the zoom increments 
-  zoom: 4.7,
-  layers: [
-    layers.Very_Low_growth,
-    layers.Low_growth,
-    layers.Average_growth,
-    layers.High_growth,
-    layers.Very_High_growth
-  ]
+  zoom: 4.7
+  // layers: [
+  //   layers.Very_Low_growth,
+  //   layers.Low_growth,
+  //   layers.Average_growth,
+  //   layers.High_growth,
+  //   layers.Very_High_growth
+  // ]
 });
 
 // Adding the tile layer
@@ -29,16 +29,16 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 }).addTo(myMap); 
 
 // Create an overlays object to add to the layer control:
-let overlays = {
-  "Very Low Growth": layers.Low_growth,
-  "Low Growth": layers.Low_growth,
-  "Average Growth": layers.Average_growth,
-  "High Growth": layers.High_growth,
-  "Very High Growth": layers.High_growth
-};
+// let overlays = {
+//   "Very Low Growth": layers.Low_growth,
+//   "Low Growth": layers.Low_growth,
+//   "Average Growth": layers.Average_growth,
+//   "High Growth": layers.High_growth,
+//   "Very High Growth": layers.High_growth
+// };
 
 // Create a control for our layers, and add our overlays to it:
-L.control.layers(null, overlays).addTo(myMap); 
+// L.control.layers(null, overlays).addTo(myMap); 
 
 // Load the GeoJSON data from Github link of our repo:
 // geoJSON of counties:
@@ -132,61 +132,60 @@ d3.json(hv_risk_render).then(function(hv_risk) {
       ////////////////////////////////////
       // Create a the markers for the home value growth scale
       // Set up options for icon shapes for Very Low, Low, Average, High, and Very High home value growth categories:
-      //  Initialize an object that contains icons for each layer group.
-      let icons = {
-        Very_Low_growth:  L.BeautifyIcon.icon({
+      // Very Low:
+      options_v_low = {
         isAlphaNumericIcon: true
               , text: "Very<br>Low"
-              , borderColor: '#00ABDC' 
-              , textColor: '#00ABDC'
-              , iconSize: [39, 39] 
+              , borderColor: '#7fcdbb'  
+              , textColor: '#7fcdbb'
+              , iconSize: [45, 45]
               , borderWidth: 3
-              , innerIconStyle: 'font-size:14px;padding-top:4px;'
-            }),
+              , innerIconStyle: 'font-size:12px;padding-bottom:4px;'
+            };
       // Low:
-      Low_growth:  L.BeautifyIcon.icon({
+      options_low = {
         isAlphaNumericIcon: true
               , text: "Low"
               , borderColor: '#00ABDC' 
               , textColor: '#00ABDC'
-              , iconSize: [39, 39] 
+              , iconSize: [45, 45]
               , borderWidth: 3
               , innerIconStyle: 'font-size:14px;padding-top:4px;'
-            }),
+            };
       // Average:
-      Average_growth:  L.BeautifyIcon.icon({
+      options_ave = {
         isAlphaNumericIcon: true
               , text: "Ave"
               , borderColor: '#9970ab'
               , textColor: '#9970ab' 
-              , iconSize: [39, 39] 
+              , iconSize: [45, 45]
               , borderWidth: 3
               , innerIconStyle: 'font-size:14px;padding-top:4px;'
-            }),
+            };
       // High: 
-      High_growth:  L.BeautifyIcon.icon({
+      options_high = {
         isAlphaNumericIcon: true
               , text: "High"
-              , borderColor: '#33a02c'
-              , textColor: '#33a02c' 
-              , iconSize: [39, 39] 
+              , borderColor: '#41ab5d'
+              , textColor: '#41ab5d' 
+              , iconSize: [45, 45]
               , borderWidth: 3
               , innerIconStyle: 'font-size:14px;padding-top:4px;'
-            }),
+            };
       // Very High:  
-      Very_High_growth:  L.BeautifyIcon.icon({
+      options_v_high = {
         isAlphaNumericIcon: true
               , text: "Very<br>High"
-              , borderColor: '#33a02c'
-              , textColor: '#33a02c' 
-              , iconSize: [39, 39] 
+              , borderColor: '#004529'
+              , textColor: '#004529' 
+              , iconSize: [45, 45] 
               , borderWidth: 3
-              , innerIconStyle: 'font-size:14px;padding-top:4px;'
-            })
-          }; // end of icons setup 
+              , innerIconStyle: 'font-size:12px;padding-bottom:4px;'
+            };
+          
     
       // Create a new marker cluster group.
-      let cluster = L.markerClusterGroup();
+      let markers = L.markerClusterGroup();
 
       // Initialize stationStatusCode, which will be used as a key to access the appropriate layers, icons, and station count for the layer group.
       let geo_code;
@@ -202,58 +201,57 @@ d3.json(hv_risk_render).then(function(hv_risk) {
         if (hvi === "Very Low") {
           geo_code = "Very_Low_growth";
           // Add a new marker to the cluster group, and bind a popup.
-          // markers.addLayer(L.marker([lat_geo, lng_geo],{
-          //       icon: L.BeautifyIcon.icon(options_v_low),
-          //       draggable: false
-          //   }).bindPopup("County Home Value Index Growth from 2021 to 2022: <strong>" + geo_data.features[i].properties.zhvi_yr_growth + "</strong>")); 
+          markers.addLayer(L.marker([lat_geo, lng_geo],{
+                icon: L.BeautifyIcon.icon(options_v_low),
+                draggable: false
+            }).bindPopup("County Home Value Index Growth from 2021 to 2022: <strong>" + geo_data.features[i].properties.zhvi_yr_growth + "</strong>")); 
         }
         // Check for zhvi_yr_growth_label == Low:
         else if (hvi === "Low") {
           geo_code = "Low_growth";
           // Add a new marker to the cluster group, and bind a popup.
-          // markers.addLayer(L.marker([lat_geo, lng_geo],{
-          //       icon: L.BeautifyIcon.icon(options_low),
-          //       draggable: false
-          //   }).bindPopup("County Home Value Index Growth from 2021 to 2022: <strong>" + geo_data.features[i].properties.zhvi_yr_growth + "</strong>")); 
+          markers.addLayer(L.marker([lat_geo, lng_geo],{
+                icon: L.BeautifyIcon.icon(options_low),
+                draggable: false
+            }).bindPopup("County Home Value Index Growth from 2021 to 2022: <strong>" + geo_data.features[i].properties.zhvi_yr_growth + "</strong>")); 
         }
         // Check for zhvi_yr_growth_label == Average:
         else if (hvi === "Average") {
           geo_code = "Average_growth";
           // Add a new marker to the cluster group, and bind a popup.
-          // markers.addLayer(L.marker([lat_geo, lng_geo],{
-          //       icon: L.BeautifyIcon.icon(options_ave),
-          //       draggable: false
-          //   }).bindPopup("County Home Value Index Growth from 2021 to 2022: <strong>" + geo_data.features[i].properties.zhvi_yr_growth + "</strong>")); 
+          markers.addLayer(L.marker([lat_geo, lng_geo],{
+                icon: L.BeautifyIcon.icon(options_ave),
+                draggable: false
+            }).bindPopup("County Home Value Index Growth from 2021 to 2022: <strong>" + geo_data.features[i].properties.zhvi_yr_growth + "</strong>")); 
         }
         // Check for zhvi_yr_growth_label == High:
         else if (hvi === "High") {
           geo_code = "High_growth";
           // Add a new marker to the cluster group, and bind a popup.
-          // markers.addLayer(L.marker([lat_geo, lng_geo],{
-          //       icon: L.BeautifyIcon.icon(options_high),
-          //       draggable: false
-          //   }).bindPopup("County Home Value Index Growth from 2021 to 2022: <strong>" + geo_data.features[i].properties.zhvi_yr_growth + "</strong>")); 
+          markers.addLayer(L.marker([lat_geo, lng_geo],{
+                icon: L.BeautifyIcon.icon(options_high),
+                draggable: false
+            }).bindPopup("County Home Value Index Growth from 2021 to 2022: <strong>" + geo_data.features[i].properties.zhvi_yr_growth + "</strong>")); 
         }
         // Check for zhvi_yr_growth_label == Very High:
         else if (hvi === "Very High") {
           geo_code = "Very_High_growth";
           // Add a new marker to the cluster group, and bind a popup.
-          // markers.addLayer(L.marker([lat_geo, lng_geo],{
-          //       icon: L.BeautifyIcon.icon(options_v_high),
-          //       draggable: false
-          //   }).bindPopup("County Home Value Index Growth from 2021 to 2022: <strong>" + geo_data.features[i].properties.zhvi_yr_growth + "</strong>")); 
+          markers.addLayer(L.marker([lat_geo, lng_geo],{
+                icon: L.BeautifyIcon.icon(options_v_high),
+                draggable: false
+            }).bindPopup("County Home Value Index Growth from 2021 to 2022: <strong>" + geo_data.features[i].properties.zhvi_yr_growth + "</strong>")); 
         }
-      
       // Add our marker cluster layer to the map.
-      // myMap.addLayer(markers);
+      myMap.addLayer(markers);
 
-      // Create a new marker with the appropriate icon and coordinates.
-      let newMarker = L.marker([lat_geo, lng_geo], {
-        icon: icons[geo_code]
-      }); 
-
-      // Add the new marker to the appropriate layer.
-      newMarker.addTo(layers[geo_code]);
+      //   // Create a new marker with the appropriate icon and coordinates.
+      //   let newMarker = L.marker([lat_geo, lng_geo], {
+      //     icon: icons[geo_code]
+      //   }); 
+      //   console.log('newMarker',newMarker)
+      // // Add the new marker to the appropriate layer.
+      // newMarker.addTo(layers[geo_code]);
 
     };
 
