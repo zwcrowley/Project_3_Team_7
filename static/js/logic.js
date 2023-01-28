@@ -11,13 +11,28 @@ let myMap = L.map("map", {
   center: [36, -96],
   zoomDelta: 0.2, // Sets the zoom per click 
   zoomSnap: 0.1,  // Sets the zoom increments 
-  zoom: 4.7
+  zoom: 4.7,
+  layers: [
+    layers.Low_growth,
+    layers.Average_growth,
+    layers.High_growth
+  ]
 });
 
 // Adding the tile layer
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(myMap); 
+
+// Create an overlays object to add to the layer control:
+let overlays = {
+  "ZHVI Low Growth": layers.Low_growth,
+  "ZHVI Average Growth": layers.Average_growth,
+  "ZHVI High Growth": layers.High_growth
+};
+
+// Create a control for our layers, and add our overlays to it:
+L.control.layers(null, overlays).addTo(myMap); 
 
 // Load the GeoJSON data from Github link of our repo:
 // geoJSON of counties:
@@ -50,16 +65,17 @@ d3.json(hv_risk_render).then(function(hv_risk) {
       } // end of init()
 
     ////////////////////////////////////
-    // Nested for loop to save the risk_index_score inside the geojson properties for each feature:
+    // Nested for loop to merge the following values inside the geojson properties for each feature:
     // Loop through each state data value in the hv_risk json file:
     for (var i = 0; i < hv_risk.length; i++) {
       // Grab state_county_FIPS from hv_risk data:
       let data_FIPS = parseFloat(hv_risk[i].state_county_FIPS); 
-      // Grab risk_index_score and set to var dataValue:
-      let risk_dataValue = parseFloat(hv_risk[i].risk_index_score); 
-      let hv_dataValue = parseFloat(hv_risk[i].zhvi_yr_growth); 
-      let lat_dataValue = parseFloat(hv_risk[i].lat); 
-      let lng_dataValue = parseFloat(hv_risk[i].lng); 
+      // Grab values and set them to var dataValue:
+      let risk_dataValue = parseFloat(hv_risk[i].risk_index_score);  
+      let hv_dataValue = parseFloat(hv_risk[i].zhvi_yr_growth).toFixed(2); 
+      let hv_label_dataValue = hv_risk[i].zhvi_yr_growth_label;
+      let lat_dataValue = parseFloat(hv_risk[i].lat).toFixed(2); 
+      let lng_dataValue = parseFloat(hv_risk[i].lng).toFixed(2); 
       // Nested for loop that goes throught the geo_data json:
       // Find the corresponding state_county_FIPS inside the GeoJSON
       for (var j = 0; j < geo_data.features.length; j++) {
@@ -70,8 +86,9 @@ d3.json(hv_risk_render).then(function(hv_risk) {
         // Copy the data value into the geoJSON for:  risk_index_score, zhvi_yr_growth, lat, and lng:
         geo_data.features[j].properties.risk_index_score = risk_dataValue;
         geo_data.features[j].properties.zhvi_yr_growth = hv_dataValue;
+        geo_data.features[j].properties.zhvi_yr_growth_label = hv_label_dataValue;
         geo_data.features[j].properties.lat = lat_dataValue;
-        geo_data.features[j].properties.lng = lng_dataValue; 
+        geo_data.features[j].properties.lng = lng_dataValue;  
         //   // Stop looking through the JSON 
         break;  
         }
@@ -89,7 +106,6 @@ d3.json(hv_risk_render).then(function(hv_risk) {
       // The number of breaks in the step range
       steps: 20,
       // q for quartile, e for equidistant, k for k-means
-      // ASK WHAT IS BEST FOR THIS:::::
       mode: "k",   
       style: {
       // Border color
@@ -109,11 +125,37 @@ d3.json(hv_risk_render).then(function(hv_risk) {
 
       ////////////////////////////////////
       // Create a the markers for the home value growth scale
-      // Set up options for icon shapes:
-        options = {
-          icon: 'leaf',
-          iconShape: 'marker'
-      };
+      // Set up options for icon shapes for Low, Average, High home value growth categories:
+      // Low:
+      options_low = {
+        isAlphaNumericIcon: true
+              , text: "Low"
+              , borderColor: '#00ABDC' 
+              , textColor: '#00ABDC'
+              , iconSize: [39, 39] 
+              , borderWidth: 3
+              , innerIconStyle: 'font-size:14px;padding-top:4px;'
+            };
+      // Average:
+      options_ave = {
+        isAlphaNumericIcon: true
+              , text: "Ave"
+              , borderColor: '#9970ab'
+              , textColor: '#9970ab' 
+              , iconSize: [39, 39] 
+              , borderWidth: 3
+              , innerIconStyle: 'font-size:14px;padding-top:4px;'
+            };
+      // High:
+      options_high = {
+        isAlphaNumericIcon: true
+              , text: "High"
+              , borderColor: '#33a02c'
+              , textColor: '#33a02c' 
+              , iconSize: [39, 39] 
+              , borderWidth: 3
+              , innerIconStyle: 'font-size:14px;padding-top:4px;'
+            };
     
       // Create a new marker cluster group.
       let markers = L.markerClusterGroup();
@@ -122,32 +164,35 @@ d3.json(hv_risk_render).then(function(hv_risk) {
         // Set the lat and lng for each feature to a a variable:
           let lat_geo = geo_data.features[i].properties.lat;
           let lng_geo = geo_data.features[i].properties.lng; 
+          let hvi = geo_data.features[i].properties.zhvi_yr_growth_label;
  
-        // Check for the location property.
-        if (lat_geo && lng_geo) {
+        // Check for zhvi_yr_growth_label == Low:
+        if (hvi === "Low") {
           // Add a new marker to the cluster group, and bind a popup.
           markers.addLayer(L.marker([lat_geo, lng_geo],{
-                icon: L.BeautifyIcon.icon(options),
+                icon: L.BeautifyIcon.icon(options_low),
                 draggable: false
-            }).bindPopup("County Home Value Index Growth from 2021 to 2022: <strong>" + parseFloat(geo_data.features[i].properties.zhvi_yr_growth).toFixed(2) + "</strong>")); 
+            }).bindPopup("County Home Value Index Growth from 2021 to 2022: <strong>" + geo_data.features[i].properties.zhvi_yr_growth + "</strong>")); 
+        }
+        // Check for zhvi_yr_growth_label == Average:
+        else if (hvi === "Average") {
+          // Add a new marker to the cluster group, and bind a popup.
+          markers.addLayer(L.marker([lat_geo, lng_geo],{
+                icon: L.BeautifyIcon.icon(options_ave),
+                draggable: false
+            }).bindPopup("County Home Value Index Growth from 2021 to 2022: <strong>" + geo_data.features[i].properties.zhvi_yr_growth + "</strong>")); 
+        }
+        // Check for zhvi_yr_growth_label == High:
+        else if (hvi === "High") {
+          // Add a new marker to the cluster group, and bind a popup.
+          markers.addLayer(L.marker([lat_geo, lng_geo],{
+                icon: L.BeautifyIcon.icon(options_high),
+                draggable: false
+            }).bindPopup("County Home Value Index Growth from 2021 to 2022: <strong>" + geo_data.features[i].properties.zhvi_yr_growth + "</strong>")); 
         }
       } 
       // Add our marker cluster layer to the map.
       myMap.addLayer(markers);
-
-      ////////////////////////////////////
-      // Example from github repo: https://github.com/Leaflet/Leaflet.markercluster/blob/master/example/geojson.html
-      //var markers = L.markerClusterGroup();
-
-      // var geoJsonLayer = L.geoJson(geoJsonData, {
-      // 	onEachFeature: function (feature, layer) {
-      // 		layer.bindPopup(feature.properties.address);
-      // 	}
-      // });
-      // markers.addLayer(geoJsonLayer);
-
-      // map.addLayer(markers);
-      // map.fitBounds(markers.getBounds());
 
       ////////////////////////////////////
       // Set up the legend:

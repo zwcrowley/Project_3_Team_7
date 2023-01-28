@@ -49,8 +49,7 @@ def home_risk():
 
     """Return a json of the columns below"""
     # Query all columns that we want from the dataset:
-    results = session.query(hv_risk.index, hv_risk.county_name, hv_risk.lat, hv_risk.lng, hv_risk.state_county_FIPS, hv_risk.zhvi_yr_growth_scale, hv_risk.zhvi_yr_growth_label, hv_risk.risk_index_score,
-    hv_risk.drought_score, hv_risk.flood_score, hv_risk.heatwave_score, hv_risk.hurricane_score, hv_risk.lightning_score, hv_risk.tornado_scores, hv_risk.wildfire_scores, hv_risk.winterweather_score).all()
+    results = session.query(hv_risk.index, hv_risk.county_name, hv_risk.lat, hv_risk.lng, hv_risk.state_county_FIPS, hv_risk.zhvi_yr_growth_scale, hv_risk.zhvi_yr_growth_label, hv_risk.risk_index_score, hv_risk.drought_score, hv_risk.flood_score, hv_risk.heatwave_score, hv_risk.hurricane_score, hv_risk.lightning_score, hv_risk.tornado_scores, hv_risk.wildfire_scores, hv_risk.winterweather_score).all() 
     
     session.close()
 
