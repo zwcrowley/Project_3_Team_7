@@ -100,6 +100,13 @@ d3.json(hv_risk_render).then(function(hv_risk) {
       }).addTo(myMap); // end of choropleth layer function
 
       ////////////////////////////////////
+      // Create a the markers for the home value growth scale
+      // Set up options for icon shapes:
+        options = {
+          icon: 'leaf',
+          iconShape: 'marker'
+      };
+    
       // Create a new marker cluster group.
       let markers = L.markerClusterGroup();
       // Loop through the data.
@@ -111,7 +118,10 @@ d3.json(hv_risk_render).then(function(hv_risk) {
         // Check for the location property.
         if (lat_geo && lng_geo) {
           // Add a new marker to the cluster group, and bind a popup.
-          markers.addLayer(L.marker([lat_geo, lng_geo]).bindPopup("County Home Value Index Growth from 2021 to 2022: <strong>" + parseFloat(geo_data.features[i].properties.zhvi_yr_growth).toFixed(2) + "</strong>")); 
+          markers.addLayer(L.marker([lat_geo, lng_geo],{
+                icon: L.BeautifyIcon.icon(options),
+                draggable: false
+            }).bindPopup("County Home Value Index Growth from 2021 to 2022: <strong>" + parseFloat(geo_data.features[i].properties.zhvi_yr_growth).toFixed(2) + "</strong>")); 
         }
       } 
       // Add our marker cluster layer to the map.

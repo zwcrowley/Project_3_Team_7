@@ -19,3 +19,6 @@ from Kaggle (this dataset shows the home prices per county for the United states
 - 2. Click based bar graph that shows the natural risk score for each of the top 8 natural disasters(drought, heat wave, hurricanes, coastal + river flooding, lightning, tornadoes, wildfires, and winter weather) per county.
   
 - 3. Click based scatterplot to show if the natural risk score has a relationship with home prices per county.
+
+### Add icons with colors to show hvi levels on top of each county:
+- NEW JS library: BeautifyMarker-Leaflet.BeautifyMarkers https://github.com/masajid390/BeautifyMarker/blob/master/README.md
