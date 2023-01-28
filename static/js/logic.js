@@ -125,7 +125,16 @@ d3.json(hv_risk_render).then(function(hv_risk) {
 
       ////////////////////////////////////
       // Create a the markers for the home value growth scale
-      // Set up options for icon shapes for Low, Average, High home value growth categories:
+      // Set up options for icon shapes for Very Low, Low, Average, High, and Very High home value growth categories:
+      options_v_low = {
+        isAlphaNumericIcon: true
+              , text: "Very<br>Low"
+              , borderColor: '#00ABDC' 
+              , textColor: '#00ABDC'
+              , iconSize: [39, 39] 
+              , borderWidth: 3
+              , innerIconStyle: 'font-size:14px;padding-top:4px;'
+            };
       // Low:
       options_low = {
         isAlphaNumericIcon: true
@@ -146,10 +155,20 @@ d3.json(hv_risk_render).then(function(hv_risk) {
               , borderWidth: 3
               , innerIconStyle: 'font-size:14px;padding-top:4px;'
             };
-      // High:
+      // High: 
       options_high = {
         isAlphaNumericIcon: true
               , text: "High"
+              , borderColor: '#33a02c'
+              , textColor: '#33a02c' 
+              , iconSize: [39, 39] 
+              , borderWidth: 3
+              , innerIconStyle: 'font-size:14px;padding-top:4px;'
+            };
+      // Very High:  
+      options_v_high = {
+        isAlphaNumericIcon: true
+              , text: "Very<br>High"
               , borderColor: '#33a02c'
               , textColor: '#33a02c' 
               , iconSize: [39, 39] 
@@ -166,8 +185,16 @@ d3.json(hv_risk_render).then(function(hv_risk) {
           let lng_geo = geo_data.features[i].properties.lng; 
           let hvi = geo_data.features[i].properties.zhvi_yr_growth_label;
  
+        // Check for zhvi_yr_growth_label == Very Low:
+        if (hvi === "Very Low") {
+          // Add a new marker to the cluster group, and bind a popup.
+          markers.addLayer(L.marker([lat_geo, lng_geo],{
+                icon: L.BeautifyIcon.icon(options_v_low),
+                draggable: false
+            }).bindPopup("County Home Value Index Growth from 2021 to 2022: <strong>" + geo_data.features[i].properties.zhvi_yr_growth + "</strong>")); 
+        }
         // Check for zhvi_yr_growth_label == Low:
-        if (hvi === "Low") {
+        else if (hvi === "Low") {
           // Add a new marker to the cluster group, and bind a popup.
           markers.addLayer(L.marker([lat_geo, lng_geo],{
                 icon: L.BeautifyIcon.icon(options_low),
@@ -187,6 +214,14 @@ d3.json(hv_risk_render).then(function(hv_risk) {
           // Add a new marker to the cluster group, and bind a popup.
           markers.addLayer(L.marker([lat_geo, lng_geo],{
                 icon: L.BeautifyIcon.icon(options_high),
+                draggable: false
+            }).bindPopup("County Home Value Index Growth from 2021 to 2022: <strong>" + geo_data.features[i].properties.zhvi_yr_growth + "</strong>")); 
+        }
+        // Check for zhvi_yr_growth_label == Very High:
+        else if (hvi === "Very High") {
+          // Add a new marker to the cluster group, and bind a popup.
+          markers.addLayer(L.marker([lat_geo, lng_geo],{
+                icon: L.BeautifyIcon.icon(options_v_high),
                 draggable: false
             }).bindPopup("County Home Value Index Growth from 2021 to 2022: <strong>" + geo_data.features[i].properties.zhvi_yr_growth + "</strong>")); 
         }
