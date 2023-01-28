@@ -53,7 +53,7 @@ def home_risk():
     
     session.close()
 
-    # Create a dictionary from the row data and append to a list of all_passengers
+    # Create a dictionary from the row data and append to a list of all_hv_risk
     all_hv_risk = []
     for index, county_name, lat, lng, state_county_FIPS, zhvi_yr_growth_scale, zhvi_yr_growth_label, risk_index_score,drought_score, flood_score, heatwave_score, hurricane_score, lightning_score, tornado_scores, wildfire_scores, winterweather_score in results:
         hv_risk_dict = {}
