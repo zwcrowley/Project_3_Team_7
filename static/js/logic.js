@@ -1,5 +1,13 @@
+// Initialize all the LayerGroups that we'll use.
+// Set layers at three for the home growth scale: low = below iqr, average = within iqr, high =
+let layers = {
+  Low_growth: new L.LayerGroup(),
+  Average_growth: new L.LayerGroup(),
+  High_growth: new L.LayerGroup(),
+};
+
 // Creating the map object
-var myMap = L.map("map", {
+let myMap = L.map("map", {
   center: [36, -96],
   zoomDelta: 0.2, // Sets the zoom per click 
   zoomSnap: 0.1,  // Sets the zoom increments 
