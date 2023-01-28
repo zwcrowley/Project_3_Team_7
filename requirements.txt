@@ -1,6 +1,7 @@
 certifi
 Click
 datetime
+flask
 Flask
 flask_cors 
 Flask-SQLAlchemy
