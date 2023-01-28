@@ -20,17 +20,6 @@ let geoData = "https://raw.githubusercontent.com/zwcrowley/Project_3_Team_7/main
 let hv_risk_render = "https://team-7-proj3-map.onrender.com/api/v1.0/home_value_risk_data"
 
 
-// // Github links:
-// // csv of hv_risk merged data:
-// let hv_risk_github = "https://raw.githubusercontent.com/zwcrowley/Project_3_Team_7/main/output/hv_risk_df.csv"
-
-// // Logan Powell github link
-let geoJSON_github_LP = "https://raw.githubusercontent.com/loganpowell/census-geojson/master/GeoJSON/500k/2021/county.json"
-
-
-// Alt api from opendatasoft.com:
-// let geoData2 = "https://public.opendatasoft.com/api/records/1.0/search/?dataset=us-county-boundaries&q=&rows=3233"
-
 ////////////////////////////////////
 // Set up a var for the choropleth map:
 let geojson;
@@ -41,7 +30,7 @@ d3.json(hv_risk_render).then(function(hv_risk) {
 
   ////////////////////////////////////
   // d3 call to github for geo_data data- json:
-  d3.json(geoJSON_github_LP).then(function(geo_data) {
+  d3.json(geoData).then(function(geo_data) {
     console.log("geo_data", geo_data)
 
     //////////////////
@@ -61,21 +50,26 @@ d3.json(hv_risk_render).then(function(hv_risk) {
       // Grab risk_index_score and set to var dataValue:
       let risk_dataValue = parseFloat(hv_risk[i].risk_index_score); 
       let hv_dataValue = parseFloat(hv_risk[i].zhvi_yr_growth); 
+      let lat_dataValue = parseFloat(hv_risk[i].lat); 
+      let lng_dataValue = parseFloat(hv_risk[i].lng); 
       // Nested for loop that goes throught the geo_data json:
       // Find the corresponding state_county_FIPS inside the GeoJSON
       for (var j = 0; j < geo_data.features.length; j++) {
-        let geo_FIPS = parseFloat(geo_data.features[j].properties.GEOID); 
+        let geo_FIPS = parseFloat(geo_data.features[j].properties.state_county_FIPS); 
         // console.log("geo_FIPS", geo_FIPS) 
         // If the fips matches in both datasets:
         if (data_FIPS === geo_FIPS) {
-        //   // Copy the data value into the JSON
+        // Copy the data value into the geoJSON for:  risk_index_score, zhvi_yr_growth, lat, and lng:
         geo_data.features[j].properties.risk_index_score = risk_dataValue;
-        geo_data.features[j].properties.zhvi_yr_growth = hv_dataValue; 
+        geo_data.features[j].properties.zhvi_yr_growth = hv_dataValue;
+        geo_data.features[j].properties.lat = lat_dataValue;
+        geo_data.features[j].properties.lng = lng_dataValue; 
         //   // Stop looking through the JSON 
         break;  
         }
       }
     }
+    console.log("geo_data properties for row 1", geo_data.features[0].properties)
 
     ////////////////////////////////////
     // Create a new choropleth layer.
@@ -108,20 +102,34 @@ d3.json(hv_risk_render).then(function(hv_risk) {
       ////////////////////////////////////
       // Create a new marker cluster group.
       let markers = L.markerClusterGroup();
-      // // Loop through the data.
-      // for (let i = 0; i < geo_data.features.length; i++) {
-      //   // Set the data location property to a variable.
-      //   let location = geo_data.features[i].location;
+      // Loop through the data.
+      for (let i = 0; i < geo_data.features.length; i++) {
+        // Set the lat and lng for each feature to a a variable:
+          let lat_geo = geo_data.features[i].properties.lat;
+          let lng_geo = geo_data.features[i].properties.lng; 
+ 
+        // Check for the location property.
+        if (lat_geo && lng_geo) {
+          // Add a new marker to the cluster group, and bind a popup.
+          markers.addLayer(L.marker([lat_geo, lng_geo]).bindPopup("County Home Value Index Growth from 2021 to 2022: <strong>" + parseFloat(geo_data.features[i].properties.zhvi_yr_growth).toFixed(2) + "</strong>")); 
+        }
+      } 
+      // Add our marker cluster layer to the map.
+      myMap.addLayer(markers);
 
-      //   // Check for the location property.
-      //   if (location) {
-      //     // Add a new marker to the cluster group, and bind a popup.
-      //     markers.addLayer(L.marker([location.coordinates[1], location.coordinates[0]])
-      //       .bindPopup(geo_data.features[j].properties.zhvi_yr_growth));
-      //   }
-      // }
-      // // Add our marker cluster layer to the map.
-      // myMap.addLayer(markers);
+      ////////////////////////////////////
+      // Example from github repo: https://github.com/Leaflet/Leaflet.markercluster/blob/master/example/geojson.html
+      //var markers = L.markerClusterGroup();
+
+      // var geoJsonLayer = L.geoJson(geoJsonData, {
+      // 	onEachFeature: function (feature, layer) {
+      // 		layer.bindPopup(feature.properties.address);
+      // 	}
+      // });
+      // markers.addLayer(geoJsonLayer);
+
+      // map.addLayer(markers);
+      // map.fitBounds(markers.getBounds());
 
       ////////////////////////////////////
       // Set up the legend:
@@ -153,7 +161,7 @@ d3.json(hv_risk_render).then(function(hv_risk) {
       // Function to return data where mouseclick occured:
       function getData(event) {
         // Save the state_county_FIPS as county_clicked from the clicked on county on map:
-        let county_clicked = event.target.feature.properties.GEOID;
+        let county_clicked = event.target.feature.properties.state_county_FIPS;
         console.log("clicked county", county_clicked)
         
         // Filter hv_risk to match the chosen county from the map, add [0] to the end to pull out that array from hv_risk data:
