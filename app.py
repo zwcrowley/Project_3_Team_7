@@ -7,9 +7,10 @@ from sqlalchemy import create_engine, func
 from flask import Flask, jsonify 
 from flask_cors import CORS
 
-#################################################
+###############################################
 # Database Setup
 ###############################################
+# Create engine for sqlalchemy
 engine = create_engine("sqlite:///output/hv_risk.sqlite")
 
 # reflect an existing database into a new model
