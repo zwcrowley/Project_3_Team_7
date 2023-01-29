@@ -1,12 +1,5 @@
-// Initialize all the LayerGroups that we'll use.
-// Set layers at three for the home growth scale: low = below iqr, average = within iqr, high =
-// let layers = {
-//   Very_Low_growth: new L.LayerGroup(),
-//   Low_growth: new L.LayerGroup(),
-//   Average_growth: new L.LayerGroup(),
-//   High_growth: new L.LayerGroup(),
-//   Very_High_growth: new L.LayerGroup()
-// };
+//  **Project 3- Team 7**
+//  By: Juan Marin, James Lamotte, Zack Crowley, Matusola Bein 
 
 // Creating the map object
 let myMap = L.map("map", {
@@ -14,13 +7,6 @@ let myMap = L.map("map", {
   zoomDelta: 0.2, // Sets the zoom per click 
   zoomSnap: 0.1,  // Sets the zoom increments 
   zoom: 4.7
-  // layers: [
-  //   layers.Very_Low_growth,
-  //   layers.Low_growth,
-  //   layers.Average_growth,
-  //   layers.High_growth,
-  //   layers.Very_High_growth
-  // ]
 });
 
 // Adding the tile layer
@@ -28,17 +14,6 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(myMap); 
 
-// Create an overlays object to add to the layer control:
-// let overlays = {
-//   "Very Low Growth": layers.Low_growth,
-//   "Low Growth": layers.Low_growth,
-//   "Average Growth": layers.Average_growth,
-//   "High Growth": layers.High_growth,
-//   "Very High Growth": layers.High_growth
-// };
-
-// Create a control for our layers, and add our overlays to it:
-// L.control.layers(null, overlays).addTo(myMap); 
 
 // Load the GeoJSON data from Github link of our repo:
 // geoJSON of counties:
@@ -182,21 +157,21 @@ d3.json(hv_risk_render).then(function(hv_risk) {
               , borderWidth: 3
               , innerIconStyle: 'font-size:12px;padding-bottom:4px;'
             };
-          
     
       // Create a new marker cluster group.
       let markers = L.markerClusterGroup();
 
-      // Initialize stationStatusCode, which will be used as a key to access the appropriate layers, icons, and station count for the layer group.
+      // Initialize geo_code, which will be used as a key to access the appropriate layers, icons, and station count for the layer group.
       let geo_code;
 
-      // Loop through the data.
+      // Marker loop: 
+      // Loop through the data, set lat,lng and hvi to vars:
       for (let i = 0; i < geo_data.features.length; i++) {
         // Set the lat and lng for each feature to a a variable:
           let lat_geo = geo_data.features[i].properties.lat;
           let lng_geo = geo_data.features[i].properties.lng; 
           let hvi = geo_data.features[i].properties.zhvi_yr_growth_label;
- 
+        // During the loop check for each zhvi_yr_growth_label category, when it matches make a marker using L.BeautifyIcons that were set up above and bind a popup with the hvi change value:
         // Check for zhvi_yr_growth_label == Very Low:
         if (hvi === "Very Low") {
           geo_code = "Very_Low_growth";
@@ -245,15 +220,7 @@ d3.json(hv_risk_render).then(function(hv_risk) {
       // Add our marker cluster layer to the map.
       myMap.addLayer(markers);
 
-      //   // Create a new marker with the appropriate icon and coordinates.
-      //   let newMarker = L.marker([lat_geo, lng_geo], {
-      //     icon: icons[geo_code]
-      //   }); 
-      //   console.log('newMarker',newMarker)
-      // // Add the new marker to the appropriate layer.
-      // newMarker.addTo(layers[geo_code]);
-
-    };
+    }; // end of marker loop
 
 
       ////////////////////////////////////
@@ -344,6 +311,37 @@ d3.json(hv_risk_render).then(function(hv_risk) {
         // Render the plot to the div tag with id "bar", and pass barData and layout:
         Plotly.newPlot("graph_1", barData, layout_bar);
       } // end of makeBarChart() call 
+
+      //Adding ScatterPlot
+      // reactive Scatter Plot that will display the state level relationship between the change in hvi and the risk index, based on the state that is in county that was clicked on from the map:
+      function makeScatterplot(scatterArray) {
+        let scatter_new = scatterArray
+        let scatterArray_y = [scatter_new.risk_index_score];
+        let scatterArray_x = [scatter_new.zhvi_yr_growth]; 
+
+        let trace1 = {
+          x: scatterArray_x,
+          y: scatterArray_y,
+          name: "graph2",
+          mode: "markers",
+          type: "scatter",
+          orientation: "h"
+        };
+        var scatterData = [trace1];
+        console.log("scatterData", scatterData) 
+
+        let layout_scatter = {
+          title: `<b>Scatter Plot</b>`,
+          margin: {
+            l: 100,
+            r: 100,
+            t: 100,
+            b: 100
+          }
+        };
+        console.log("layout_scatter", layout_scatter)  
+        Plotly.newPlot("graph_2", scatterData, layout_scatter);
+      } // end of makeScatterplot() call.
 
     //////////////////
     // Call the initial function to set up the first graph:

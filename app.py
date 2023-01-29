@@ -52,6 +52,7 @@ def home_risk():
     # Query all columns that we want from the dataset:
     results = session.query(hv_risk.index, hv_risk.county_name, 
     hv_risk.lat, hv_risk.lng, hv_risk.state_county_FIPS, 
+    hv_risk.state_FIPS, hv_risk.state_abbr, hv_risk.state,
     hv_risk.zhvi_yr_growth_scale, hv_risk.zhvi_yr_growth_label, 
     hv_risk.risk_index_score, hv_risk.drought_score, hv_risk.flood_score, hv_risk.heatwave_score, hv_risk.hurricane_score, 
     hv_risk.lightning_score, hv_risk.tornado_scores, 
@@ -61,13 +62,16 @@ def home_risk():
 
     # Create a dictionary from the row data and append to a list of all_hv_risk
     all_hv_risk = []
-    for index, county_name, lat, lng, state_county_FIPS, zhvi_yr_growth_scale, zhvi_yr_growth_label, risk_index_score,drought_score, flood_score, heatwave_score, hurricane_score, lightning_score, tornado_scores, wildfire_scores, winterweather_score in results:
+    for index, county_name, lat, lng, state_county_FIPS, state_FIPS, state_abbr, state, zhvi_yr_growth_scale, zhvi_yr_growth_label, risk_index_score,drought_score, flood_score, heatwave_score, hurricane_score, lightning_score, tornado_scores, wildfire_scores, winterweather_score in results:
         hv_risk_dict = {}
         hv_risk_dict["index"] = index
         hv_risk_dict["county_name"] = county_name
         hv_risk_dict["lat"] = lat
         hv_risk_dict["lng"] = lng
         hv_risk_dict["state_county_FIPS"] = state_county_FIPS
+        hv_risk_dict["state_FIPS"] = state_FIPS
+        hv_risk_dict["state_abbr"] = state_abbr
+        hv_risk_dict["state"] = state
         hv_risk_dict["zhvi_yr_growth"] = zhvi_yr_growth_scale
         hv_risk_dict["zhvi_yr_growth_label"] = zhvi_yr_growth_label
         hv_risk_dict["risk_index_score"] = risk_index_score
