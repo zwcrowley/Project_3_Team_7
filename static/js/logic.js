@@ -245,7 +245,7 @@ d3.json(hv_risk_render).then(function(hv_risk) {
       legend_icon.onAdd = function (map) {
       // Create a div for the legend in the html using js: '<strong>Depth (km)</strong>'
       let div_icons = L.DomUtil.create('div', 'info legend');
-      labels_icons = ['<strong>County HVI<br>Growth</strong>'];
+      labels_icons = ['<strong>County HVI<br>Growth Labels</strong>'];
       categories_icons = ['Very Low','Low','Average','High','Very High'];
       // Set the icon types
       let v_low_icon = L.BeautifyIcon.icon(options_v_low);
@@ -398,6 +398,7 @@ d3.json(hv_risk_render).then(function(hv_risk) {
         };
         console.log("layout_scatter", layout_scatter)  
         Plotly.newPlot("graph_2", scatterData, layout_scatter);
+        
       } // end of makeScatterplot() call.
 
     //////////////////

@@ -22,6 +22,7 @@ In order to answer our question we needed to obtain average home price data per 
 - Resilience climate.gov provided natural disaster risk scores per county https://resilience.climate.gov/datasets/FEMA::national-risk-index-counties/about
 - Geojson county bounds https://eric.clst.org/tech/usgeojson/
 - US county centroids https://simplemaps.com/data/us-counties
+
 #### **Visualizations**:
 
 - 1. United States Choropleth map that shows which counties have the highest risk score and average home prices.
@@ -32,3 +33,6 @@ In order to answer our question we needed to obtain average home price data per 
 
 ### Add icons with colors to show hvi levels on top of each county:
 - NEW JS library: BeautifyMarker-Leaflet.BeautifyMarkers https://github.com/masajid390/BeautifyMarker/blob/master/README.md
+
+#### Presentation Link: 
+- https://docs.google.com/presentation/d/1rfL_40uNFZG7WaOL3fGGOXEZNwmSfxrVQxN1BjVewuc/edit#slide=id.g201583bf659_0_25 

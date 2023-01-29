@@ -26,7 +26,7 @@ html{
 }
 
 .leaflet-popup-content {
-  text-align: center;
+  text-align: left;
 }
 
 /* CSS from the leaflet-choropleth documentation */
