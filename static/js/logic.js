@@ -42,12 +42,18 @@ d3.json(hv_risk_render).then(function(hv_risk) {
     function init() {
       // Set the first county to Harris County in Texas- Houston:
       let firstCounty = hv_risk.filter(county => county.county_name == "Harris")[0];
-      makeBarChart(firstCounty);  
+      // Call "makeBarChart" function to pass the firstCounty to it: 
+      makeBarChart(firstCounty); 
+      // Filter hv_risk to match the chosen county from the map, add [0] to the end to pull out that array from hv_risk data:
+      firstState = hv_risk.filter(county => county.state == "Texas"); 
+      console.log("firstState", firstState)      
+      // Call "makeScatterplot" function and pass firstState to it to initialize the scatter plot: 
+      makeScatterplot(firstState);  
       } // end of init()
 
     ////////////////////////////////////
     // Nested for loop to merge the following values inside the geojson properties for each feature:
-    // Loop through each state data value in the hv_risk json file:
+    // Loop through each state data value in the hv_risk json file from render:
     for (var i = 0; i < hv_risk.length; i++) {
       // Grab state_county_FIPS from hv_risk data:
       let data_FIPS = parseFloat(hv_risk[i].state_county_FIPS); 
@@ -57,6 +63,8 @@ d3.json(hv_risk_render).then(function(hv_risk) {
       let hv_label_dataValue = hv_risk[i].zhvi_yr_growth_label;
       let lat_dataValue = parseFloat(hv_risk[i].lat).toFixed(2); 
       let lng_dataValue = parseFloat(hv_risk[i].lng).toFixed(2); 
+      let state_name_dataValue = hv_risk[i].state; 
+      let state_abbr_dataValue = hv_risk[i].state_abbr; 
       // Nested for loop that goes throught the geo_data json:
       // Find the corresponding state_county_FIPS inside the GeoJSON
       for (var j = 0; j < geo_data.features.length; j++) {
@@ -69,12 +77,15 @@ d3.json(hv_risk_render).then(function(hv_risk) {
         geo_data.features[j].properties.zhvi_yr_growth = hv_dataValue;
         geo_data.features[j].properties.zhvi_yr_growth_label = hv_label_dataValue;
         geo_data.features[j].properties.lat = lat_dataValue;
-        geo_data.features[j].properties.lng = lng_dataValue;  
+        geo_data.features[j].properties.lng = lng_dataValue; 
+        geo_data.features[j].properties.state_name = state_name_dataValue;
+        geo_data.features[j].properties.state_abbr = state_abbr_dataValue;  
         //   // Stop looking through the JSON 
         break;  
         }
       }
     }
+    console.log("hv_risk properties for row 1", hv_risk[0]) 
     console.log("geo_data properties for row 1", geo_data.features[0].properties)
 
     ////////////////////////////////////
@@ -220,7 +231,7 @@ d3.json(hv_risk_render).then(function(hv_risk) {
       // Add our marker cluster layer to the map.
       myMap.addLayer(markers);
 
-    }; // end of marker loop
+      }; // end of marker loop
 
 
       ////////////////////////////////////
@@ -255,13 +266,24 @@ d3.json(hv_risk_render).then(function(hv_risk) {
         // Save the state_county_FIPS as county_clicked from the clicked on county on map:
         let county_clicked = event.target.feature.properties.state_county_FIPS;
         console.log("clicked county", county_clicked)
+
+        // Save the state FIPS which is STATE as county_clicked from the clicked on county on map:
+        let state_clicked = event.target.feature.properties.STATE;
+        console.log("clicked county state", state_clicked)
         
         // Filter hv_risk to match the chosen county from the map, add [0] to the end to pull out that array from hv_risk data:
         let hv_risk_Matched = hv_risk.filter(county => county.state_county_FIPS == county_clicked)[0]; 
         console.log("hv_risk_Matched",hv_risk_Matched)
-        // Pass hv_risk_Matched to all of the charts:
+
+        // Filter hv_risk to match the chosen county from the map, add [0] to the end to pull out that array from hv_risk data:
+        hv_risk_Matched_state = hv_risk.filter(county => county.state_FIPS == state_clicked); 
+        console.log("hv_risk_Matched_state", hv_risk_Matched_state)
+
+        // Pass matched arrays to each of the charts:
         // Call "makeBarChart" function to pass the hv_risk_Matched to it: 
         makeBarChart(hv_risk_Matched); 
+        // Call "makeScatterplot" function to pass the hv_risk_Matched_state to it: 
+        makeScatterplot(hv_risk_Matched_state); 
       }; // end of getData()
 
       //////////////////
@@ -306,18 +328,19 @@ d3.json(hv_risk_render).then(function(hv_risk) {
             b: 100
           }
         };
-        console.log("layout_bar", layout_bar)  
 
         // Render the plot to the div tag with id "bar", and pass barData and layout:
         Plotly.newPlot("graph_1", barData, layout_bar);
       } // end of makeBarChart() call 
 
       //Adding ScatterPlot
-      // reactive Scatter Plot that will display the state level relationship between the change in hvi and the risk index, based on the state that is in county that was clicked on from the map:
+      // reactive Scatter Plot that will display the state level relationship between the change in hvi and the risk index, based on the state that is in county that was clicked on from the map: reversedData.map(object => object.greekSearchResults)
       function makeScatterplot(scatterArray) {
-        let scatter_new = scatterArray
-        let scatterArray_y = [scatter_new.risk_index_score];
-        let scatterArray_x = [scatter_new.zhvi_yr_growth]; 
+        let scatter_new = scatterArray;
+        let scatterArray_y = scatter_new.map(county => county.risk_index_score);
+        let scatterArray_x = scatter_new.map(county => county.zhvi_yr_growth); 
+        console.log("scatterArray_y", scatterArray_y)  
+        console.log("scatterArray_x", scatterArray_x)  
 
         let trace1 = {
           x: scatterArray_x,
