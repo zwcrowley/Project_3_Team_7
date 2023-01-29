@@ -1,12 +1,12 @@
 //  **Project 3- Team 7**
 //  By: Juan Marin, James Lamotte, Zack Crowley, Matusola Bein 
 
-// Creating the map object
+// Creating the map object called myMap
 let myMap = L.map("map", {
   center: [36, -96],
   zoomDelta: 0.2, // Sets the zoom per click 
   zoomSnap: 0.1,  // Sets the zoom increments 
-  zoom: 4.7
+  zoom: 4.7 // sets initial zoom for map
 });
 
 // Adding the tile layer
@@ -40,17 +40,19 @@ d3.json(hv_risk_render).then(function(hv_risk) {
     //////////////////
     // Function to initialize the first county hv_risk data, passes that to getData(), the on event in the next function will updata once a new county is selected from the map:
     function init() {
-      // Set the first county to Harris County in Texas- Houston:
+      // Set the first county to Harris County in Texas- Houston, add [0] to the end to pull out that array from hv_risk data:
       let firstCounty = hv_risk.filter(county => county.county_name == "Harris")[0];
       // Call "makeBarChart" function to pass the firstCounty to it: 
       makeBarChart(firstCounty); 
-      // Filter hv_risk to match the chosen county from the map, add [0] to the end to pull out that array from hv_risk data:
+      // Filter hv_risk to match the chosen county from the map:
       firstState = hv_risk.filter(county => county.state == "Texas"); 
       console.log("firstState", firstState)      
       // Call "makeScatterplot" function and pass firstState to it to initialize the scatter plot: 
       makeScatterplot(firstState);  
       } // end of init()
 
+      // Setup merge array:
+      let geo_data_merge = [];
     ////////////////////////////////////
     // Nested for loop to merge the following values inside the geojson properties for each feature:
     // Loop through each state data value in the hv_risk json file from render:
@@ -79,14 +81,14 @@ d3.json(hv_risk_render).then(function(hv_risk) {
         geo_data.features[j].properties.lat = lat_dataValue;
         geo_data.features[j].properties.lng = lng_dataValue; 
         geo_data.features[j].properties.state_name = state_name_dataValue;
-        geo_data.features[j].properties.state_abbr = state_abbr_dataValue;  
-        //   // Stop looking through the JSON 
+        geo_data.features[j].properties.state_abbr = state_abbr_dataValue;
+        // geo_data_merge.push(geo_data); 
+
+        // Stop looking through the JSON 
         break;  
         }
       }
     }
-    console.log("hv_risk properties for row 1", hv_risk[0]) 
-    console.log("geo_data properties for row 1", geo_data.features[0].properties)
 
     ////////////////////////////////////
     // Create a new choropleth layer.
@@ -182,6 +184,7 @@ d3.json(hv_risk_render).then(function(hv_risk) {
           let lat_geo = geo_data.features[i].properties.lat;
           let lng_geo = geo_data.features[i].properties.lng; 
           let hvi = geo_data.features[i].properties.zhvi_yr_growth_label;
+
         // During the loop check for each zhvi_yr_growth_label category, when it matches make a marker using L.BeautifyIcons that were set up above and bind a popup with the hvi change value:
         // Check for zhvi_yr_growth_label == Very Low:
         if (hvi === "Very Low") {
@@ -233,9 +236,41 @@ d3.json(hv_risk_render).then(function(hv_risk) {
 
       }; // end of marker loop
 
+      //////////////////
+      // Custom legend for hvi markers
 
+      // Create a legend, in the bottom left of the map and pass it to the map:
+      let legend_icon = L.control({position: 'bottomleft'}); 
+      // Function to add content to the legend:
+      legend_icon.onAdd = function (map) {
+      // Create a div for the legend in the html using js: '<strong>Depth (km)</strong>'
+      let div_icons = L.DomUtil.create('div', 'info legend');
+      labels_icons = ['<strong>County HVI<br>Growth</strong>'];
+      categories_icons = ['Very Low','Low','Average','High','Very High'];
+      // Set the icon types
+      let v_low_icon = L.BeautifyIcon.icon(options_v_low);
+      let low_icon = L.BeautifyIcon.icon(options_low);
+      let ave_icon = L.BeautifyIcon.icon(options_ave);
+      let high_icon = L.BeautifyIcon.icon(options_high);
+      let v_high_icon = L.BeautifyIcon.icon(options_v_high);
+      // Save to array:
+      icons = [v_low_icon, low_icon, ave_icon, high_icon, v_high_icon]
+
+      // Loop through for each category in categories and set up the label and icon in the legend for each break, this requires using the element and index to get all the info in the right order in the legend: '<div class="legend-icon">' + icon.outerHTML + '</div><div class="legend-icon">' + category + '</div>'
+      categories_icons.forEach((category, index) => { 
+        let icon = icons[index].createIcon(); 
+        div_icons.innerHTML +=
+        labels_icons.push(
+          '<div class="legend-icon">' + icon.outerHTML + '</div>' + '<div class="legend-icon">' + category + '</div>');  
+          }) 
+          div_icons.innerHTML = labels_icons.join('<br>');
+        return div_icons;   
+      }; 
+      // Add the icons legend to the map:
+      legend_icon.addTo(myMap); 
+      
       ////////////////////////////////////
-      // Set up the legend:
+      // Set up the main legend for choropleth risk index:
       let legend = L.control({ position: "bottomright" });
       legend.onAdd = function() {
         let div = L.DomUtil.create("div", "info legend");
@@ -308,9 +343,6 @@ d3.json(hv_risk_render).then(function(hv_risk) {
           marker:{
             color: barColors
           },
-          xaxis: {
-            categoryorder: "category ascending"
-          }, 
           type: "bar",
           orientation: "h"
         };
@@ -320,7 +352,7 @@ d3.json(hv_risk_render).then(function(hv_risk) {
 
         // Apply a title to the layout and margins, pull the ID for the title:
         let layout_bar = {
-          title: `<b>Risk Scores for ${bar_new.county_name} County</b>`,
+          title: `<b>Climate Risk Scores for ${bar_new.county_name} County</b>`,
           margin: {
             l: 100,
             r: 100,
@@ -339,8 +371,8 @@ d3.json(hv_risk_render).then(function(hv_risk) {
         let scatter_new = scatterArray;
         let scatterArray_y = scatter_new.map(county => county.risk_index_score);
         let scatterArray_x = scatter_new.map(county => county.zhvi_yr_growth); 
-        console.log("scatterArray_y", scatterArray_y)  
-        console.log("scatterArray_x", scatterArray_x)  
+        // console.log("scatterArray_y", scatterArray_y)  
+        // console.log("scatterArray_x", scatterArray_x)  
 
         let trace1 = {
           x: scatterArray_x,
@@ -348,13 +380,15 @@ d3.json(hv_risk_render).then(function(hv_risk) {
           name: "graph2",
           mode: "markers",
           type: "scatter",
-          orientation: "h"
+          marker: { size: 6 }
         };
         var scatterData = [trace1];
         console.log("scatterData", scatterData) 
 
         let layout_scatter = {
-          title: `<b>Scatter Plot</b>`,
+          title: `<b>Climate Risk Scores and Home Value Growth <br> 2021-2022 for ${scatter_new[0].state}</b>`,
+          xaxis: {title: '<b>Climate Risk Index Scores</b>'},
+          yaxis: {title: '<b>Home Value Growth 2021-2022</b>'}, 
           margin: {
             l: 100,
             r: 100,

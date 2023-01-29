@@ -66,3 +66,17 @@ h1 {
 h2 {
   text-align: center;
 }
+/* Styling for icon legend, DON'T SEPARTE THESE TWO, that will mess up all the markers in the whole map!!!!!!*/
+.legend-icon {
+  display: inline-block;
+  margin-right: 6px !important;
+  margin-left: 6px !important;
+  margin-top: 28px !important;
+  width: 32px;
+  height: 22px; 
+}
+.legend-icon .leaflet-marker-icon {
+  /* position: relative !important; */
+  margin-right: 0px !important;
+  margin-bottom: 0px !important;
+}
