@@ -279,7 +279,7 @@ d3.json(hv_risk_render).then(function(hv_risk) {
         let labels = [];
 
         // Add the minimum and maximum.
-        let legendInfo = "<h2>Climate Risk Index Score</h2>" +
+        let legendInfo = "<h2><strong>Climate Risk Index Score</strong></h2>" +
           "<div class=\"labels\">" +
             "<div class=\"min\">" + limits[0] + "</div>" +
             "<div class=\"max\">" + limits[limits.length - 1] + "</div>" +
