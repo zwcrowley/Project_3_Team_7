@@ -1,12 +1,13 @@
-/* body {
+body {
   padding: 0;
   margin: 0;
-} */
+} 
 
 /* html for whole page */
 html{
   background-color: #eceeef;  
 }
+
 /* Change color around main-container */
 .main_container{
   background-color: #eceeef; 
@@ -15,6 +16,8 @@ html{
 #map {
   position: relative;
   height: 100%;
+  padding: 0;
+  margin: 0;
 }
 .graph-title {
   font: 22px Arial, Helvetica, sans-serif;
@@ -33,7 +36,7 @@ html{
 .legend {
   color: #555;
   padding: 6px 8px;
-  font: 12px Arial, Helvetica, sans-serif;
+  font: 18px Arial, Helvetica, sans-serif;
   font-weight: bold;
   background: white;
   background: rgba(255,255,255,0.8);
@@ -58,25 +61,30 @@ html{
 .legend .max {
   float: right;
 }
-
+/* Headers */
 h1 {
   text-align: center;
 }
-
 h2 {
   text-align: center;
 }
-/* Styling for icon legend, DON'T SEPARTE THESE TWO, that will mess up all the markers in the whole map!!!!!!*/
+h3 {
+  font: 16px Arial, Helvetica, sans-serif
+}
+
+/* Styling for icon legend */
 .legend-icon {
   display: inline-block;
-  margin-right: 6px !important;
-  margin-left: 6px !important;
-  margin-top: 28px !important;
-  width: 32px;
+  margin-left: 8px !important;
+  margin-right: -16px !important;  
+  margin-top: 18px !important;
+  width: 58px;
   height: 22px; 
+  font: 16px Arial, Helvetica, sans-serif;
+  font-weight: bold;
 }
-.legend-icon .leaflet-marker-icon {
-  /* position: relative !important; */
-  margin-right: 0px !important;
-  margin-bottom: 0px !important;
-}
+ .legend-icon-title {
+  font: 22px Arial, Helvetica, sans-serif;
+  margin-top: 0px !important;
+  margin-bottom: -18px !important;
+}  

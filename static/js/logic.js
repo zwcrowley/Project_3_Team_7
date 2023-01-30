@@ -9,30 +9,29 @@ let myMap = L.map("map", {
   zoom: 4.7 // sets initial zoom for map
 });
 
-// Adding the tile layer
+// Add the tile layer to the map
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(myMap); 
 
 
-// Load the GeoJSON data from Github link of our repo:
-// geoJSON of counties:
+// Set link fro the GeoJSON data from Github link of our repo- geoJSON of county bounds:
 let geoData = "https://raw.githubusercontent.com/zwcrowley/Project_3_Team_7/main/output/us_county_bounds_new.json";
 
-// Load the hv_risk data:
-// json of merged hv_risk data:
+// Set link of hv_risk data- json of merged hv_risk data:
 let hv_risk_render = "https://team-7-proj3-map.onrender.com/api/v1.0/home_value_risk_data"
-
 
 ////////////////////////////////////
 // Set up a var for the choropleth map:
 let geojson;
 ////////////////////////////////////
+// Load the hv_risk data:
 // d3 call to github for hv_risk data- csv:
 d3.json(hv_risk_render).then(function(hv_risk) {
   console.log("hv_risk", hv_risk)
 
   ////////////////////////////////////
+  // Load the GeoJSON data from Github link of our repo:
   // d3 call to github for geo_data data- json:
   d3.json(geoData).then(function(geo_data) {
     console.log("geo_data", geo_data)
@@ -46,7 +45,7 @@ d3.json(hv_risk_render).then(function(hv_risk) {
       makeBarChart(firstCounty); 
       // Filter hv_risk to match the chosen county from the map:
       firstState = hv_risk.filter(county => county.state == "Texas"); 
-      console.log("firstState", firstState)      
+
       // Call "makeScatterplot" function and pass firstState to it to initialize the scatter plot: 
       makeScatterplot(firstState);  
       } // end of init()
@@ -90,6 +89,12 @@ d3.json(hv_risk_render).then(function(hv_risk) {
       }
     }
 
+    // Function to reformat values are NaN to read as missing:
+    function reformValues(value) {
+      if (value === "NaN") return value = "Missing" 
+      else return value
+    }
+
     ////////////////////////////////////
     // Create a new choropleth layer.
     geojson = L.choropleth(geo_data, {
@@ -109,7 +114,7 @@ d3.json(hv_risk_render).then(function(hv_risk) {
       },
         // Binding a popup to each layer:
         onEachFeature: function(feature, layer) {
-          layer.bindPopup("County Name: <strong>" + feature.properties.NAME +"<br /><br />"+ feature.properties.state_county_FIPS + "</strong><br /><br />Risk Index Score: " + parseFloat(feature.properties.risk_index_score).toFixed(2)); 
+          layer.bindPopup(`<h3>County Name: <strong> ${feature.properties.NAME} </strong> </h3><hr><h3> Risk Index Score: <strong> ${reformValues(parseFloat(feature.properties.risk_index_score).toFixed(2))} </strong></h3></h3><hr><h3>2021-2022 HVI Growth: <strong>${geo_data.features[i].properties.zhvi_yr_growth}</strong></h3>`); 
           // Sends the data from a mouse click on the map to getData():
           layer.on({
             click: getData
@@ -118,7 +123,7 @@ d3.json(hv_risk_render).then(function(hv_risk) {
       }).addTo(myMap); // end of choropleth layer function
 
       ////////////////////////////////////
-      // Create a the markers for the home value growth scale
+      // Create the markers for the home value growth scale
       // Set up options for icon shapes for Very Low, Low, Average, High, and Very High home value growth categories:
       // Very Low:
       options_v_low = {
@@ -192,8 +197,7 @@ d3.json(hv_risk_render).then(function(hv_risk) {
           // Add a new marker to the cluster group, and bind a popup.
           markers.addLayer(L.marker([lat_geo, lng_geo],{
                 icon: L.BeautifyIcon.icon(options_v_low),
-                draggable: false
-            }).bindPopup("County Home Value Index Growth from 2021 to 2022: <strong>" + geo_data.features[i].properties.zhvi_yr_growth + "</strong>")); 
+                draggable: false })); 
         }
         // Check for zhvi_yr_growth_label == Low:
         else if (hvi === "Low") {
@@ -201,8 +205,7 @@ d3.json(hv_risk_render).then(function(hv_risk) {
           // Add a new marker to the cluster group, and bind a popup.
           markers.addLayer(L.marker([lat_geo, lng_geo],{
                 icon: L.BeautifyIcon.icon(options_low),
-                draggable: false
-            }).bindPopup("County Home Value Index Growth from 2021 to 2022: <strong>" + geo_data.features[i].properties.zhvi_yr_growth + "</strong>")); 
+                draggable: false })); 
         }
         // Check for zhvi_yr_growth_label == Average:
         else if (hvi === "Average") {
@@ -210,17 +213,15 @@ d3.json(hv_risk_render).then(function(hv_risk) {
           // Add a new marker to the cluster group, and bind a popup.
           markers.addLayer(L.marker([lat_geo, lng_geo],{
                 icon: L.BeautifyIcon.icon(options_ave),
-                draggable: false
-            }).bindPopup("County Home Value Index Growth from 2021 to 2022: <strong>" + geo_data.features[i].properties.zhvi_yr_growth + "</strong>")); 
+                draggable: false })); 
         }
         // Check for zhvi_yr_growth_label == High:
         else if (hvi === "High") {
           geo_code = "High_growth";
-          // Add a new marker to the cluster group, and bind a popup.
+          // Add a new marker to the cluster group, and bind a popup:
           markers.addLayer(L.marker([lat_geo, lng_geo],{
                 icon: L.BeautifyIcon.icon(options_high),
-                draggable: false
-            }).bindPopup("County Home Value Index Growth from 2021 to 2022: <strong>" + geo_data.features[i].properties.zhvi_yr_growth + "</strong>")); 
+                draggable: false })); 
         }
         // Check for zhvi_yr_growth_label == Very High:
         else if (hvi === "Very High") {
@@ -228,8 +229,7 @@ d3.json(hv_risk_render).then(function(hv_risk) {
           // Add a new marker to the cluster group, and bind a popup.
           markers.addLayer(L.marker([lat_geo, lng_geo],{
                 icon: L.BeautifyIcon.icon(options_v_high),
-                draggable: false
-            }).bindPopup("County Home Value Index Growth from 2021 to 2022: <strong>" + geo_data.features[i].properties.zhvi_yr_growth + "</strong>")); 
+                draggable: false })); 
         }
       // Add our marker cluster layer to the map.
       myMap.addLayer(markers);
@@ -245,8 +245,8 @@ d3.json(hv_risk_render).then(function(hv_risk) {
       legend_icon.onAdd = function (map) {
       // Create a div for the legend in the html using js: '<strong>Depth (km)</strong>'
       let div_icons = L.DomUtil.create('div', 'info legend');
-      labels_icons = ['<strong>County HVI<br>Growth Labels</strong>'];
-      categories_icons = ['Very Low','Low','Average','High','Very High'];
+      labels_icons = ['<div class="legend-icon-title"><strong>County HVI<br>Growth</strong></div>'];
+      categories_icons = ['0-20','21-40','41-60','61-80','81-100'];
       // Set the icon types
       let v_low_icon = L.BeautifyIcon.icon(options_v_low);
       let low_icon = L.BeautifyIcon.icon(options_low);
@@ -279,7 +279,7 @@ d3.json(hv_risk_render).then(function(hv_risk) {
         let labels = [];
 
         // Add the minimum and maximum.
-        let legendInfo = "<h2>National Risk Index Score</h2>" +
+        let legendInfo = "<h2>Climate Risk Index Score</h2>" +
           "<div class=\"labels\">" +
             "<div class=\"min\">" + limits[0] + "</div>" +
             "<div class=\"max\">" + limits[limits.length - 1] + "</div>" +
@@ -328,7 +328,7 @@ d3.json(hv_risk_render).then(function(hv_risk) {
         let bar_new = barArray 
         // Set up colors for bars:
         barColors = ["#084594", "#e31a1c", "#ff7f00", "#737373", "#762a83","#e7298a","#9ecae1", "#662506"]       
-        // Set up nice labesles forf all of the risk vars we want to display from the array of bar_new:
+        // Set up nice labels forf all of the risk vars we want to display from the array of bar_new:
         let y_labels = ["Drought","Flood","Heatwave", "Hurricane", "Lightning", "Tornado", "Wildfire","Winter<br>Weather"].reverse(); 
         // Set all the vars in the array of bar_new to object vars to build the charts and reverse them:
         let barArray_x = [bar_new.drought_score, bar_new.flood_score,bar_new.heatwave_score, bar_new.hurricane_score, bar_new.lightning_score,bar_new.tornado_scores, bar_new.wildfire_scores, bar_new.winterweather_score];   
@@ -348,11 +348,13 @@ d3.json(hv_risk_render).then(function(hv_risk) {
         };
         // add the trace1 to a barData array:
         var barData = [trace1];
-        console.log("barData", barData) 
 
         // Apply a title to the layout and margins, pull the ID for the title:
         let layout_bar = {
           title: `<b>Climate Risk Scores for ${bar_new.county_name} County</b>`,
+          xaxis: {
+            range: [0, 100]
+          },
           margin: {
             l: 100,
             r: 100,
@@ -374,29 +376,35 @@ d3.json(hv_risk_render).then(function(hv_risk) {
         // console.log("scatterArray_y", scatterArray_y)  
         // console.log("scatterArray_x", scatterArray_x)  
 
-        let trace1 = {
+        let trace2 = {
           x: scatterArray_x,
           y: scatterArray_y,
+          text: scatterArray_y, 
+          hovertext: scatterArray_y,
           name: "graph2",
           mode: "markers",
           type: "scatter",
           marker: { size: 6 }
         };
-        var scatterData = [trace1];
-        console.log("scatterData", scatterData) 
+        var scatterData = [trace2];
 
         let layout_scatter = {
           title: `<b>Climate Risk Scores and Home Value Growth <br> 2021-2022 for ${scatter_new[0].state}</b>`,
-          xaxis: {title: '<b>Climate Risk Index Scores</b>'},
-          yaxis: {title: '<b>Home Value Growth 2021-2022</b>'}, 
+          xaxis: {
+              title: '<b>Climate Risk Index Scores</b>',
+              range: [0, 100]
+                },
+          yaxis: {
+              title: '<b>Home Value Growth 2021-2022</b>',
+              range: [0, 100]
+                },
           margin: {
             l: 100,
             r: 100,
             t: 100,
             b: 100
-          }
-        };
-        console.log("layout_scatter", layout_scatter)  
+                }
+              };
         Plotly.newPlot("graph_2", scatterData, layout_scatter);
         
       } // end of makeScatterplot() call.
