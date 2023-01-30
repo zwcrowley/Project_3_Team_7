@@ -49,13 +49,15 @@ p {
   text-align: center;
 }
 /* Styling for select forms */
-.form-group {
-  position: relative;
-  height: 100%;
-  padding: 0;
-  margin: 0;
+.form-label {
+  padding: 10;
+  font: 18px Inter;
+  margin: 10;
 }
 
+.panel-title {
+  font: 16px Inter;
+}
 /* Change color around main-container */
 .main_container{
   background-color: #eceeef; 

@@ -38,17 +38,104 @@ d3.json(hv_risk_render).then(function(hv_risk) {
 
 
     // Function to create the drop down menu using unique state names hv_risk data:
-    function createDropDown(data) {
+    function createDropDown_1(data) {
       // Get unique state names as a var:
       let unique_states = [...new Set(hv_risk.map(cnty => cnty.state))].sort()
       console.log("unique_states", unique_states)
       // Select the id for the drop down menu and set as a var:
-      let select = d3.select("#selDataset");
+      let select = d3.select("#selDataset_1");
       // Set up the dropdown menu by passeing the unique_state names to the select tag and creating an "option" child using forEach to iterate through the individual states populating the dropdown menu:
       unique_states.forEach((state) => {
         select.append("option").text(state).property("value", state);  
-        });
-    }
+          });
+        }
+    // Function to create the drop down menu using unique state names hv_risk data:
+    function createDropDown_2(data) {
+      // Get unique state names as a var:
+      let unique_states = [...new Set(hv_risk.map(cnty => cnty.state))].sort()
+      console.log("unique_states", unique_states)
+      // Select the id for the drop down menu and set as a var:
+      let select = d3.select("#selDataset_2");
+      // Set up the dropdown menu by passeing the unique_state names to the select tag and creating an "option" child using forEach to iterate through the individual states populating the dropdown menu:
+      unique_states.forEach((state) => {
+        select.append("option").text(state).property("value", state);  
+          });
+        }
+
+    // On change event: This function will updata once a new state is selected from the dropdown menu and then call updatePanel_1() and separate for the other updatePanel_2()
+    d3.select("#selDataset_1").on("change", updatePanel_1); 
+    d3.select("#selDataset_2").on("change", updatePanel_2);  
+
+
+    // Function to update the state statistics panel with the new info:
+    function updatePanel_1() {
+      // Set the div of id="sample-metadata" to panel
+      let panel = d3.select("#state_selected_1");
+
+      // Assign the value of the dropdown menu option to a variable:
+      let dataValue = d3.select("#selDataset_1").property("value");
+
+      let state_data = hv_risk.filter(county => county.state == dataValue);  
+
+      // Clear previous selection in the panel:
+      panel.html("");
+
+      // State Risk Ave
+      let state_risk = state_data.map(cnty => cnty.risk_index_score)
+      let state_risk_ave = math.mean(state_risk)
+
+      // HVI Ave
+      let state_hvi = state_data.map(cnty => cnty.zhvi_yr_growth)
+      let state_hvi_ave = math.mean(state_hvi)
+
+      // National Risk ave
+      let natl_risk = hv_risk.map(cnty => cnty.risk_index_score)
+      let natl_risk_ave = math.mean(natl_risk)
+
+      // Add ave for the state risk and HVI Growth:
+      panel.append("h5").text(`State Average Risk Score: ${state_risk_ave.toFixed(2)}`);
+      panel.append("h5").text(`Average HVI Growth: ${state_hvi_ave.toFixed(2)}`); 
+
+      } 
+      // Function to update the state statistics panel with the new info:
+    function updatePanel_2(newdata) {
+      // Set the div of id="sample-metadata" to panel
+      let panel = d3.select("#state_selected_2");
+
+      // Assign the value of the dropdown menu option to a variable:
+      let dataValue = d3.select("#selDataset_2").property("value");
+      console.log("dataValue",dataValue)
+
+      let state_data = hv_risk.filter(county => county.state == dataValue);  
+      console.log("state_data",state_data)
+
+      // Clear previous selection in the panel:
+      panel.html("");
+
+      // State Risk Ave
+      let state_risk = state_data.map(cnty => cnty.risk_index_score)
+      console.log("state_risk",state_risk)
+      let state_risk_ave = math.mean(state_risk)
+      console.log("state_risk_ave",state_risk_ave) 
+
+      // HVI Ave
+      let state_hvi = state_data.map(cnty => cnty.zhvi_yr_growth)
+      console.log("state_hvi",state_hvi)
+      let state_hvi_ave = math.mean(state_hvi)
+      console.log("state_hvi_ave",state_hvi_ave) 
+
+      // National Risk ave
+      let natl_risk = hv_risk.map(cnty => cnty.risk_index_score)
+      console.log("natl_risk",natl_risk)
+      let natl_risk_ave = math.mean(natl_risk)
+      console.log("natl_risk_ave",natl_risk_ave)
+
+      // Add ave for the state risk and HVI Growth:
+      panel.append("h5").text(`State Average Risk Score: ${state_risk_ave.toFixed(2)}`);
+      panel.append("h5").text(`Average HVI Growth: ${state_hvi_ave.toFixed(2)}`); 
+
+
+      } 
 
     //////////////////
     // Function to initialize the first county hv_risk data, passes that to getData(), the on event in the next function will updata once a new county is selected from the map:
@@ -59,6 +146,12 @@ d3.json(hv_risk_render).then(function(hv_risk) {
       makeBarChart(firstCounty); 
       // Filter hv_risk to match the chosen county from the map:
       firstState = hv_risk.filter(county => county.state == "Texas"); 
+
+      // Call "updatePanel_1" function to update the panel with the firstState info:
+      updatePanel_1(firstState);
+
+      // Call "updatePanel_2" function to update the panel with the firstState info:
+      updatePanel_2(firstState);
 
       // Call "makeScatterplot" function and pass firstState to it to initialize the scatter plot: 
       makeScatterplot(firstState);  
@@ -421,7 +514,8 @@ d3.json(hv_risk_render).then(function(hv_risk) {
     //////////////////
     // Call the initial function to set up the first graph:
     // Run the functions to create the dropdown menu and initilize the charts:
-    createDropDown(hv_risk);  
+    createDropDown_1(hv_risk); 
+    createDropDown_2(hv_risk); 
     init();
 
   }); // end of d3 call to github for geo_data- geojson.

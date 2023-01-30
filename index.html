@@ -15,6 +15,11 @@
     <script src="https://unpkg.com/leaflet@1.3.3/dist/leaflet.js"
     integrity="sha512-tAGcCfR4Sc5ZP5ZoVz0quoZDYX5aCtEm/eu1KhSLj2c9eFrylXZknQYmxUssFaVJKvvc0dJQixhGjG2yXWiV9Q=="
     crossorigin=""></script>
+
+    <!-- Math JavaScript code-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.5.0/math.js"
+    crossorigin=""></script>
+    
     
     <!-- D3 library -->
     <script type="text/javascript" src="https://d3js.org/d3.v5.min.js"></script>
@@ -71,25 +76,46 @@
       </div>
     </nav>
     <!-- Start of main container -->
+    <!-- Start of row 2 -->
     <div class="row">
-      <div class="container-fluid"> <!-- End of container-fluid 1 -->
           <!-- Start of form for state comparision selection -->
-        <div class="col-md-2">
+        <div class="col-md-2 p-3">
           <div class="form-group">
-            <label for="exampleSelect1" class="form-label mt-4">Select a state to generate comparision statistics:</label>
-            <select class="form-select" id="selDataset"></select>
+            <label for="exampleSelect1" class="form-label"> <h3>Select a state:</h3></label>
+            <select class="form-select" id="selDataset_1"></select>
           </div>
         </div>
-      </div>
-    </div>
-    <!-- Start of row 1 jumbotron -->
+        <div class="col-md-4 p-3">
+          <div class="panel panel-primary">
+              <div class="panel-heading">
+                <h3 class="panel-title">First State Statistics:</h3>
+              </div>
+            <div id="state_selected_1" class="panel-body"></div>
+          </div>
+        </div>
+        <div class="col-md-2 p-3">
+          <div class="form-group">
+            <label for="exampleSelect2" class="form-label"> <h3>Select another state:</h3></label>
+            <select class="form-select" id="selDataset_2"></select>
+          </div>
+        </div>
+        <div class="col-md-4 p-3">
+          <div class="panel panel-primary">
+              <div class="panel-heading">
+                <h3 class="panel-title">Second State Statistics:</h3>
+              </div>
+            <div id="state_selected_2" class="panel-body"></div>
+          </div>
+        </div>
+    </div> <!-- End of row 2 -->
+    <!-- Start of row 2 -->
     <div class="container-fluid">
       <div class="row">
           <!-- Map -->  
           <div class="col-md-8">
             <div class="map-box">
-              <div class="map-title">
-                Click on a county on the map below to see more information and to update graphs:
+              <div class="map-title p-2">
+                Click on a county on the map below to see more information and update graphs:
               </div>
                 <div id="map" style="height: 900px"></div>
             </div>
@@ -99,7 +125,7 @@
           <!-- graph_1 -->  
         <div class="col-md-4">
           <div class="graph_1-box">
-            <div class="graph-title">
+            <div class="graph-title p-2">
                 Graphs updated by county map click:
               </div>
                 <div id="graph_1" ></div>
