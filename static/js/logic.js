@@ -37,16 +37,16 @@ d3.json(hv_risk_render).then(function(hv_risk) {
     console.log("geo_data", geo_data)
 
 
-    // Function to create the drop down menu using "names" from the belly button JSON data:
+    // Function to create the drop down menu using unique state names hv_risk data:
     function createDropDown(data) {
       // Get unique state names as a var:
       let unique_states = [...new Set(hv_risk.map(cnty => cnty.state))].sort()
       console.log("unique_states", unique_states)
       // Select the id for the drop down menu and set as a var:
       let select = d3.select("#selDataset");
-      // Set up the dropdown menu by pulling the individual id and passing it to the select tag and creating an "option" child using forEach to iterate through the individual ids:
-      names.forEach((name) => {
-        select.append("option").text(name).property("value", name);  
+      // Set up the dropdown menu by passeing the unique_state names to the select tag and creating an "option" child using forEach to iterate through the individual states populating the dropdown menu:
+      unique_states.forEach((state) => {
+        select.append("option").text(state).property("value", state);  
         });
     }
 
@@ -64,8 +64,6 @@ d3.json(hv_risk_render).then(function(hv_risk) {
       makeScatterplot(firstState);  
       } // end of init()
 
-      // Setup merge array:
-      let geo_data_merge = [];
     ////////////////////////////////////
     // Nested for loop to merge the following values inside the geojson properties for each feature:
     // Loop through each state data value in the hv_risk json file from render:
@@ -84,7 +82,6 @@ d3.json(hv_risk_render).then(function(hv_risk) {
       // Find the corresponding state_county_FIPS inside the GeoJSON
       for (var j = 0; j < geo_data.features.length; j++) {
         let geo_FIPS = parseFloat(geo_data.features[j].properties.state_county_FIPS); 
-        // console.log("geo_FIPS", geo_FIPS) 
         // If the fips matches in both datasets:
         if (data_FIPS === geo_FIPS) {
         // Copy the data value into the geoJSON for:  risk_index_score, zhvi_yr_growth, lat, and lng:
@@ -95,8 +92,6 @@ d3.json(hv_risk_render).then(function(hv_risk) {
         geo_data.features[j].properties.lng = lng_dataValue; 
         geo_data.features[j].properties.state_name = state_name_dataValue;
         geo_data.features[j].properties.state_abbr = state_abbr_dataValue;
-        // geo_data_merge.push(geo_data); 
-
         // Stop looking through the JSON 
         break;  
         }
@@ -403,7 +398,7 @@ d3.json(hv_risk_render).then(function(hv_risk) {
         var scatterData = [trace2];
 
         let layout_scatter = {
-          title: `<b>Climate Risk Scores and Home Value Growth <br> 2021-2022 for ${scatter_new[0].state}</b>`,
+          title: `<b>Climate Risk Scores and <br> 2021-2022 HVI Growth for:  ${scatter_new[0].state}</b>`,
           xaxis: {
               title: '<b>Climate Risk Index Scores</b>',
               range: [0, 100]
@@ -425,6 +420,8 @@ d3.json(hv_risk_render).then(function(hv_risk) {
 
     //////////////////
     // Call the initial function to set up the first graph:
+    // Run the functions to create the dropdown menu and initilize the charts:
+    createDropDown(hv_risk);  
     init();
 
   }); // end of d3 call to github for geo_data- geojson.

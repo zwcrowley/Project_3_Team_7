@@ -70,10 +70,21 @@
         </div>
       </div>
     </nav>
-  <!-- Start of container -->
-  <div class="container-fluid">
+    <!-- Start of main container -->
+    <div class="row">
+      <div class="container-fluid"> <!-- End of container-fluid 1 -->
+          <!-- Start of form for state comparision selection -->
+        <div class="col-md-2">
+          <div class="form-group">
+            <label for="exampleSelect1" class="form-label mt-4">Select a state to generate comparision statistics:</label>
+            <select class="form-select" id="selDataset"></select>
+          </div>
+        </div>
+      </div>
+    </div>
     <!-- Start of row 1 jumbotron -->
-        <div class="row">
+    <div class="container-fluid">
+      <div class="row">
           <!-- Map -->  
           <div class="col-md-8">
             <div class="map-box">
@@ -86,27 +97,20 @@
           <!-- Map -->
 
           <!-- graph_1 -->  
-          <div class="col-md-4">
-            <div class="graph_1-box">
-              <!-- <div class="graph-title">
-                graph 1 space for title:
-              </div> -->
+        <div class="col-md-4">
+          <div class="graph_1-box">
+            <div class="graph-title">
+                Graphs updated by county map click:
+              </div>
                 <div id="graph_1" ></div>
                 <!-- <div class="graph-title">
                   graph 2 space for title:
                 </div> -->
                 <div id="graph_2" ></div>
-            </div>
-          </div>
-            <div class="form-group">
-              <label for="exampleSelect1" class="form-label mt-4">Select a state or DC:</label>
-              <select class="form-select" id="selDataset"></select>
-            </div>
-            </div>
-          </div>
-          <!-- graph_1 -->
-     </div> <!-- End of row 1 -->
-  </div> <!-- End of main container -->
+              </div>
+            </div> <!-- End of row 1 -->
+          </div> <!-- End of container-fluid 2 -->
+        </div> <!-- End of main container -->
 
     <!-- Bootstrap CDN -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
