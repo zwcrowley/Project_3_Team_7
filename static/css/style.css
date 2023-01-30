@@ -1,12 +1,19 @@
+/* html for whole page */
+html{
+  background-color: #ced4da;  
+}
+
+/* Main body styling- use same bg color for this and html: */
 body {
   padding: 0;
   margin: 0;
-} 
-
-/* html for whole page */
-html{
-  background-color: #eceeef;  
+  background-color: #ced4da;   
 }
+
+/* Background for row */
+/* .row {
+  background-color: gray;
+} */
 
 /* Headers */
 h1 {
@@ -21,16 +28,17 @@ h3 {
 p {
   text-align: center;
 }
-
+/* Jumbotron main title styling */
 .jumbotron {
   background-color: #3459e6;
   text-align: center;
 }
-
+/* Jumbotron h2 main title styling */
 .jumbotron h2{
   background-color: #3459e6;
   text-align: center;
-  font: 42px Inter;
+  /* color: #343a40; */
+  font: 48px Inter;
   font-weight: 500;
 }
 

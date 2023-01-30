@@ -36,6 +36,20 @@ d3.json(hv_risk_render).then(function(hv_risk) {
   d3.json(geoData).then(function(geo_data) {
     console.log("geo_data", geo_data)
 
+
+    // Function to create the drop down menu using "names" from the belly button JSON data:
+    function createDropDown(data) {
+      // Get unique state names as a var:
+      let unique_states = [...new Set(hv_risk.map(cnty => cnty.state))].sort()
+      console.log("unique_states", unique_states)
+      // Select the id for the drop down menu and set as a var:
+      let select = d3.select("#selDataset");
+      // Set up the dropdown menu by pulling the individual id and passing it to the select tag and creating an "option" child using forEach to iterate through the individual ids:
+      names.forEach((name) => {
+        select.append("option").text(name).property("value", name);  
+        });
+    }
+
     //////////////////
     // Function to initialize the first county hv_risk data, passes that to getData(), the on event in the next function will updata once a new county is selected from the map:
     function init() {
