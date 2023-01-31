@@ -1,6 +1,9 @@
-//  **Project 3- Team 7**
+//////////////////////////
+//  Project 3- Team 7
 //  By: Juan Marin, James Lamotte, Zack Crowley, Matusola Bein 
 
+//////////////////////////////////
+// Set up the map, tile layer and links for data:
 // Creating the map object called myMap
 let myMap = L.map("map", {
   center: [36, -96],
@@ -14,7 +17,6 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(myMap); 
 
-
 // Set link fro the GeoJSON data from Github link of our repo- geoJSON of county bounds:
 let geoData = "https://raw.githubusercontent.com/zwcrowley/Project_3_Team_7/main/output/us_county_bounds_new.json";
 
@@ -27,17 +29,14 @@ let geojson;
 ////////////////////////////////////
 // Load the hv_risk data:
 // d3 call to github for hv_risk data- csv:
-d3.json(hv_risk_render).then(function(hv_risk) {
-  console.log("hv_risk", hv_risk)
+d3.json(hv_risk_render).then(function(hv_risk) { 
 
   ////////////////////////////////////
   // Load the GeoJSON data from Github link of our repo:
   // d3 call to github for geo_data data- json:
   d3.json(geoData).then(function(geo_data) {
-    console.log("geo_data", geo_data)
 
-
-    // Function to create the drop down menu using unique state names hv_risk data:
+    // Function to create the first drop down menu using unique state names hv_risk data:
     function createDropDown_1(data) {
       // Get unique state names as a var:
       let unique_states = [...new Set(hv_risk.map(cnty => cnty.state))].sort()
@@ -49,7 +48,7 @@ d3.json(hv_risk_render).then(function(hv_risk) {
         select.append("option").text(state).property("value", state);  
           });
         }
-    // Function to create the drop down menu using unique state names hv_risk data:
+    // Function to create the second drop down menu using unique state names hv_risk data:
     function createDropDown_2(data) {
       // Get unique state names as a var:
       let unique_states = [...new Set(hv_risk.map(cnty => cnty.state))].sort()
@@ -60,31 +59,32 @@ d3.json(hv_risk_render).then(function(hv_risk) {
       unique_states.forEach((state) => {
         select.append("option").text(state).property("value", state);  
           });
-        }
+    }
 
     // On change event: This function will updata once a new state is selected from the dropdown menu and then call updatePanel_1() and separate for the other updatePanel_2()
     d3.select("#selDataset_1").on("change", updatePanel_1); 
     d3.select("#selDataset_2").on("change", updatePanel_2);  
 
-
-    // Function to update the state statistics panel with the new info:
+    // Function to update the first state statistics panel with the new info:
     function updatePanel_1() {
-      // Set the div of id="sample-metadata" to panel
+      // Set the div of state_selected_1 to panel
       let panel = d3.select("#state_selected_1");
-
+      // Set the div of state_selected_1 to panel
+      let panel_natl = d3.select("#natl_stats");
       // Assign the value of the dropdown menu option to a variable:
       let dataValue = d3.select("#selDataset_1").property("value");
-
+      // Filter hv_risk data by the selected state from the dropdown menu:
       let state_data = hv_risk.filter(county => county.state == dataValue);  
 
       // Clear previous selection in the panel:
       panel.html("");
+      panel_natl.html("");
 
-      // State Risk Ave
+      // Calulate the state Risk Average
       let state_risk = state_data.map(cnty => cnty.risk_index_score)
       let state_risk_ave = math.mean(state_risk)
 
-      // HVI Ave
+      // Calulate the state HVI Average
       let state_hvi = state_data.map(cnty => cnty.zhvi_yr_growth)
       let state_hvi_ave = math.mean(state_hvi)
 
@@ -92,50 +92,44 @@ d3.json(hv_risk_render).then(function(hv_risk) {
       let natl_risk = hv_risk.map(cnty => cnty.risk_index_score)
       let natl_risk_ave = math.mean(natl_risk)
 
-      // Add ave for the state risk and HVI Growth:
-      panel.append("h5").text(`State Average Risk Score: ${state_risk_ave.toFixed(2)}`);
-      panel.append("h5").text(`Average HVI Growth: ${state_hvi_ave.toFixed(2)}`); 
+      // National Risk ave
+      let natl_hvi = hv_risk.map(cnty => cnty.zhvi_yr_growth)
+      let natl_hvi_ave = math.mean(natl_hvi)
 
-      } 
-      // Function to update the state statistics panel with the new info:
+      // Add ave for the state risk and HVI Growth to the panel:
+      panel.append("h5").text(`${dataValue} Average Risk Score: ${state_risk_ave.toFixed(2)}`);
+      panel.append("h5").text(`${dataValue} Average HVI Growth: ${state_hvi_ave.toFixed(2)}`); 
+
+      // Add ave for the National risk and HVI Growth to the national panel:
+      panel_natl.append("h6").text(`National Average Risk Score: ${natl_risk_ave.toFixed(2)}`);
+      panel_natl.append("h6").text(`National Average HVI Growth: ${natl_hvi_ave.toFixed(2)}`);  
+    } 
+
+    // Function to update the second state statistics panel with the new info:
     function updatePanel_2(newdata) {
-      // Set the div of id="sample-metadata" to panel
+      // Set the div of state_selected_2 to panel
       let panel = d3.select("#state_selected_2");
 
       // Assign the value of the dropdown menu option to a variable:
       let dataValue = d3.select("#selDataset_2").property("value");
-      console.log("dataValue",dataValue)
-
+      // Filter hv_risk data by the selected state from the dropdown menu:
       let state_data = hv_risk.filter(county => county.state == dataValue);  
-      console.log("state_data",state_data)
 
       // Clear previous selection in the panel:
       panel.html("");
 
-      // State Risk Ave
+      // Calulate the state Risk Average
       let state_risk = state_data.map(cnty => cnty.risk_index_score)
-      console.log("state_risk",state_risk)
       let state_risk_ave = math.mean(state_risk)
-      console.log("state_risk_ave",state_risk_ave) 
 
-      // HVI Ave
+      // Calulate the state HVI Average
       let state_hvi = state_data.map(cnty => cnty.zhvi_yr_growth)
-      console.log("state_hvi",state_hvi)
       let state_hvi_ave = math.mean(state_hvi)
-      console.log("state_hvi_ave",state_hvi_ave) 
 
-      // National Risk ave
-      let natl_risk = hv_risk.map(cnty => cnty.risk_index_score)
-      console.log("natl_risk",natl_risk)
-      let natl_risk_ave = math.mean(natl_risk)
-      console.log("natl_risk_ave",natl_risk_ave)
-
-      // Add ave for the state risk and HVI Growth:
-      panel.append("h5").text(`State Average Risk Score: ${state_risk_ave.toFixed(2)}`);
-      panel.append("h5").text(`Average HVI Growth: ${state_hvi_ave.toFixed(2)}`); 
-
-
-      } 
+      // Add the averages for the state risk and HVI Growth:
+      panel.append("h5").text(`${dataValue} Average Risk Score: ${state_risk_ave.toFixed(2)}`);
+      panel.append("h5").text(`${dataValue} Average HVI Growth: ${state_hvi_ave.toFixed(2)}`); 
+    } 
 
     //////////////////
     // Function to initialize the first county hv_risk data, passes that to getData(), the on event in the next function will updata once a new county is selected from the map:
@@ -144,18 +138,18 @@ d3.json(hv_risk_render).then(function(hv_risk) {
       let firstCounty = hv_risk.filter(county => county.county_name == "Harris")[0];
       // Call "makeBarChart" function to pass the firstCounty to it: 
       makeBarChart(firstCounty); 
-      // Filter hv_risk to match the chosen county from the map:
+      // Filter hv_risk to Texas to iniatilize the scatterplot:
       firstState = hv_risk.filter(county => county.state == "Texas"); 
-
-      // Call "updatePanel_1" function to update the panel with the firstState info:
-      updatePanel_1(firstState);
-
-      // Call "updatePanel_2" function to update the panel with the firstState info:
-      updatePanel_2(firstState);
-
       // Call "makeScatterplot" function and pass firstState to it to initialize the scatter plot: 
       makeScatterplot(firstState);  
-      } // end of init()
+
+      // Filter hv_risk to Alabama to iniatilize the panels:
+      firstStatePanel = hv_risk.filter(county => county.state == "Alabama"); 
+      // Call "updatePanel_1" function to update the panel with the firstState info:
+      updatePanel_1(firstStatePanel); 
+      // Call "updatePanel_2" function to update the panel with the firstState info:
+      updatePanel_2(firstStatePanel);
+    } // end of init()
 
     ////////////////////////////////////
     // Nested for loop to merge the following values inside the geojson properties for each feature:
@@ -189,9 +183,9 @@ d3.json(hv_risk_render).then(function(hv_risk) {
         break;  
         }
       }
-    }
+    } // End of merging data loop.
 
-    // Function to reformat values are NaN to read as missing:
+    // Function to reformat values that are NaN to read as missing:
     function reformValues(value) {
       if (value === "NaN") return value = "Missing" 
       else return value
@@ -206,7 +200,7 @@ d3.json(hv_risk_render).then(function(hv_risk) {
       scale: ['white', 'red'],
       // The number of breaks in the step range
       steps: 20,
-      // q for quartile, e for equidistant, k for k-means
+      // Set the mode of calculating the choropleth range using- k for k-means:
       mode: "k",   
       style: {
       // Border color
@@ -278,11 +272,9 @@ d3.json(hv_risk_render).then(function(hv_risk) {
               , innerIconStyle: 'font-size:12px;padding-bottom:4px;'
             };
     
-      // Create a new marker cluster group.
+      /////////////////////////////
+      // Create a the new marker cluster group.
       let markers = L.markerClusterGroup();
-
-      // Initialize geo_code, which will be used as a key to access the appropriate layers, icons, and station count for the layer group.
-      let geo_code;
 
       // Marker loop: 
       // Loop through the data, set lat,lng and hvi to vars:
@@ -340,7 +332,6 @@ d3.json(hv_risk_render).then(function(hv_risk) {
 
       //////////////////
       // Custom legend for hvi markers
-
       // Create a legend, in the bottom left of the map and pass it to the map:
       let legend_icon = L.control({position: 'bottomleft'}); 
       // Function to add content to the legend:
@@ -402,19 +393,15 @@ d3.json(hv_risk_render).then(function(hv_risk) {
       function getData(event) {
         // Save the state_county_FIPS as county_clicked from the clicked on county on map:
         let county_clicked = event.target.feature.properties.state_county_FIPS;
-        console.log("clicked county", county_clicked)
 
         // Save the state FIPS which is STATE as county_clicked from the clicked on county on map:
         let state_clicked = event.target.feature.properties.STATE;
-        console.log("clicked county state", state_clicked)
         
         // Filter hv_risk to match the chosen county from the map, add [0] to the end to pull out that array from hv_risk data:
         let hv_risk_Matched = hv_risk.filter(county => county.state_county_FIPS == county_clicked)[0]; 
-        console.log("hv_risk_Matched",hv_risk_Matched)
 
         // Filter hv_risk to match the chosen county from the map, add [0] to the end to pull out that array from hv_risk data:
         hv_risk_Matched_state = hv_risk.filter(county => county.state_FIPS == state_clicked); 
-        console.log("hv_risk_Matched_state", hv_risk_Matched_state)
 
         // Pass matched arrays to each of the charts:
         // Call "makeBarChart" function to pass the hv_risk_Matched to it: 
@@ -455,7 +442,7 @@ d3.json(hv_risk_render).then(function(hv_risk) {
         let layout_bar = {
           title: `<b>Climate Risk Scores for ${bar_new.county_name} County</b>`,
           xaxis: {
-            range: [0, 100]
+            range: [0, 100] // set the range of the x-axis to 0-100
           },
           margin: {
             l: 100,
@@ -469,15 +456,13 @@ d3.json(hv_risk_render).then(function(hv_risk) {
         Plotly.newPlot("graph_1", barData, layout_bar);
       } // end of makeBarChart() call 
 
-      //Adding ScatterPlot
-      // reactive Scatter Plot that will display the state level relationship between the change in hvi and the risk index, based on the state that is in county that was clicked on from the map: reversedData.map(object => object.greekSearchResults)
+      // Adding ScatterPlot
+      // reactive Scatter Plot that will display the state level relationship between the change in hvi and the risk index, based on the state that is in county that was clicked on from the map: 
       function makeScatterplot(scatterArray) {
         let scatter_new = scatterArray;
         let scatterArray_y = scatter_new.map(county => county.risk_index_score);
-        let scatterArray_x = scatter_new.map(county => county.zhvi_yr_growth); 
-        // console.log("scatterArray_y", scatterArray_y)  
-        // console.log("scatterArray_x", scatterArray_x)  
-
+        let scatterArray_x = scatter_new.map(county => county.zhvi_yr_growth);  
+        // Set the trace:
         let trace2 = {
           x: scatterArray_x,
           y: scatterArray_y,
@@ -488,17 +473,17 @@ d3.json(hv_risk_render).then(function(hv_risk) {
           type: "scatter",
           marker: { size: 6 }
         };
-        var scatterData = [trace2];
+        let scatterData = [trace2];
 
         let layout_scatter = {
-          title: `<b>Climate Risk Scores and <br> 2021-2022 HVI Growth for:  ${scatter_new[0].state}</b>`,
+          title: `<b>Climate Risk Scores and <br> 2021-2022 HVI Growth for: ${scatter_new[0].state}</b>`,
           xaxis: {
               title: '<b>Climate Risk Index Scores</b>',
-              range: [0, 100]
+              range: [0, 100] // set the range of the x-axis to 0-100
                 },
           yaxis: {
               title: '<b>Home Value Growth 2021-2022</b>',
-              range: [0, 100]
+              range: [0, 100] // set the range of the y-axis to 0-100
                 },
           margin: {
             l: 100,
@@ -513,12 +498,12 @@ d3.json(hv_risk_render).then(function(hv_risk) {
 
     //////////////////
     // Call the initial function to set up the first graph:
-    // Run the functions to create the dropdown menu and initilize the charts:
+    // Run the functions to create the dropdown menus and initialize the charts:
     createDropDown_1(hv_risk); 
     createDropDown_2(hv_risk); 
     init();
 
-  }); // end of d3 call to github for geo_data- geojson.
+  }); // end of d3 call to github repo for geo_data- geojson.
 
 }); // end of d3 call to render/Flask app for hv_risk data- json.
 

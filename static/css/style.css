@@ -10,11 +10,6 @@ body {
   background-color: #ced4da;   
 }
 
-/* Background for row */
-/* .row {
-  background-color: gray;
-} */
-
 /* Headers */
 h1 {
   text-align: center;
@@ -28,7 +23,7 @@ h3 {
 p {
   text-align: center;
 }
-/* Jumbotron main title styling */
+/* Jumbotron main title styling in the navbar */
 .jumbotron {
   background-color: #3459e6;
   text-align: center;
@@ -54,9 +49,14 @@ p {
   font: 18px Inter;
   margin: 10;
 }
-
+/* Set panel title */
 .panel-title {
+  font: 20px Inter;
+}
+/* Set panel body */
+.panel-body {
   font: 16px Inter;
+  text-align: center;
 }
 /* Change color around main-container */
 .main_container{

@@ -20,7 +20,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.5.0/math.js"
     crossorigin=""></script>
     
-    
     <!-- D3 library -->
     <script type="text/javascript" src="https://d3js.org/d3.v5.min.js"></script>
 
@@ -74,37 +73,36 @@
           </div>
         </div>
       </div>
-    </nav>
+    </nav>  <!-- End of navbar -->
     <!-- Start of main container -->
-    <!-- Start of row 2 -->
+    <!-- Start of row 1 -->
     <div class="row">
           <!-- Start of form for state comparision selection -->
-        <div class="col-md-2 p-3">
+        <div class="col-md-2 p-4">
           <div class="form-group">
             <label for="exampleSelect1" class="form-label"> <h3>Select a state:</h3></label>
             <select class="form-select" id="selDataset_1"></select>
           </div>
         </div>
-        <div class="col-md-4 p-3">
-          <div class="panel panel-primary">
-              <div class="panel-heading">
-                <h3 class="panel-title">First State Statistics:</h3>
-              </div>
+        <div class="col-md-3 p-4">
+          <div class="card border-dark p-2">
             <div id="state_selected_1" class="panel-body"></div>
           </div>
         </div>
-        <div class="col-md-2 p-3">
+        <div class="col-md-2 p-4">
           <div class="form-group">
             <label for="exampleSelect2" class="form-label"> <h3>Select another state:</h3></label>
             <select class="form-select" id="selDataset_2"></select>
           </div>
         </div>
-        <div class="col-md-4 p-3">
-          <div class="panel panel-primary">
-              <div class="panel-heading">
-                <h3 class="panel-title">Second State Statistics:</h3>
-              </div>
+        <div class="col-md-3 p-4">
+          <div class="card border-dark p-2">
             <div id="state_selected_2" class="panel-body"></div>
+          </div>
+        </div>
+        <div class="col-md-2 p-4">
+          <div class="card border-success">
+            <div id="natl_stats" class="panel-body"></div>
           </div>
         </div>
     </div> <!-- End of row 2 -->
@@ -129,12 +127,9 @@
                 Graphs updated by county map click:
               </div>
                 <div id="graph_1" ></div>
-                <!-- <div class="graph-title">
-                  graph 2 space for title:
-                </div> -->
                 <div id="graph_2" ></div>
               </div>
-            </div> <!-- End of row 1 -->
+            </div> <!-- End of row 2 -->
           </div> <!-- End of container-fluid 2 -->
         </div> <!-- End of main container -->
 
