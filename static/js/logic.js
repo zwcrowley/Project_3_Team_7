@@ -40,7 +40,6 @@ d3.json(hv_risk_render).then(function(hv_risk) {
     function createDropDown_1(data) {
       // Get unique state names as a var:
       let unique_states = [...new Set(hv_risk.map(cnty => cnty.state))].sort()
-      console.log("unique_states", unique_states)
       // Select the id for the drop down menu and set as a var:
       let select = d3.select("#selDataset_1");
       // Set up the dropdown menu by passeing the unique_state names to the select tag and creating an "option" child using forEach to iterate through the individual states populating the dropdown menu:
@@ -52,7 +51,6 @@ d3.json(hv_risk_render).then(function(hv_risk) {
     function createDropDown_2(data) {
       // Get unique state names as a var:
       let unique_states = [...new Set(hv_risk.map(cnty => cnty.state))].sort()
-      console.log("unique_states", unique_states)
       // Select the id for the drop down menu and set as a var:
       let select = d3.select("#selDataset_2");
       // Set up the dropdown menu by passeing the unique_state names to the select tag and creating an "option" child using forEach to iterate through the individual states populating the dropdown menu:
@@ -101,8 +99,8 @@ d3.json(hv_risk_render).then(function(hv_risk) {
       panel.append("h5").text(`${dataValue} Average HVI Growth: ${state_hvi_ave.toFixed(2)}`); 
 
       // Add ave for the National risk and HVI Growth to the national panel:
-      panel_natl.append("h6").text(`National Average Risk Score: ${natl_risk_ave.toFixed(2)}`);
-      panel_natl.append("h6").text(`National Average HVI Growth: ${natl_hvi_ave.toFixed(2)}`);  
+      panel_natl.append("h5").text(`National Average Risk: ${natl_risk_ave.toFixed(2)}`);
+      panel_natl.append("h5").text(`National Average HVI: ${natl_hvi_ave.toFixed(2)}`);   
     } 
 
     // Function to update the second state statistics panel with the new info:
@@ -462,12 +460,13 @@ d3.json(hv_risk_render).then(function(hv_risk) {
         let scatter_new = scatterArray;
         let scatterArray_y = scatter_new.map(county => county.risk_index_score);
         let scatterArray_x = scatter_new.map(county => county.zhvi_yr_growth);  
+        let scatterArray_labels = scatter_new.map(county => `${county.county_name} County`);  
         // Set the trace:
         let trace2 = {
           x: scatterArray_x,
           y: scatterArray_y,
-          text: scatterArray_y, 
-          hovertext: scatterArray_y,
+          text: scatterArray_labels, 
+          hovertext: scatterArray_labels, // Shows county name in scatterplot while hovering over the individual dots.
           name: "graph2",
           mode: "markers",
           type: "scatter",
